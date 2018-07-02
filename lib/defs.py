@@ -1,4 +1,3 @@
-#! /usr/bin/python3.5
 
 """
 This file contains definition of constants and codes used for the protocol
