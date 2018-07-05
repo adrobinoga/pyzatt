@@ -41,7 +41,7 @@ class TerminalMixin:
         self.set_device_info('SDKBuild', '1')
 
         # check reply code
-        self.connected_flg = self.recv_ack()
+        self.connected_flg = self.recvd_ack()
         return self.connected_flg
 
     def disconnect(self):
