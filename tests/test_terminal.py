@@ -23,6 +23,8 @@ machine_port = 4370
 
 z = pyzk.ZKSS()
 
+print_header("TEST OF TERMINAL FUNCTIONS")
+
 # connection
 print_header("1.Connection Test")
 print_info("First, connect to the device and then disable the device")
