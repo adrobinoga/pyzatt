@@ -21,7 +21,8 @@ class TerminalMixin:
         :param ip_addr: String, ip address of the device.
         :param dev_port: Int, port number.
         :return: Bool, returns True if connection is successful,
-        otherwise it returns False.
+        otherwise it returns False, also sets the flag self.connected_flg if
+        the connection is successful.
         """
 
         # connects to machine
@@ -37,7 +38,7 @@ class TerminalMixin:
         # sets session id
         self.session_id = self.last_session_code
 
-        # send SDKBuild variable of the device
+        # set SDKBuild variable of the device
         self.set_device_info('SDKBuild', '1')
 
         # check reply code
@@ -49,7 +50,7 @@ class TerminalMixin:
         Terminates connection with the given device.
 
         :return: Bool, returns True if disconnection command was
-        processed successfully.
+        processed successfully, also clears the flag self.connected_flg.
         """
         # terminate connection command
         self.send_command(CMD_EXIT)
@@ -92,7 +93,7 @@ class TerminalMixin:
         :param stat_keys: Dictionary, with the keys to request, the values
         of the given keys are overwritten with the output values.
         Example: {admin_count: -1, user_count: -1}
-        :return: None, the output is given on the same input dict.
+        :return: Dictionary, the output is given on the same input dict.
         """
         # request status structure
         self.send_command(CMD_GET_FREE_SIZES)
@@ -110,9 +111,9 @@ class TerminalMixin:
 
     def read_status(self, p):
         """
-        Reads a field from the device status attribute(dev_status).
+        Reads a field from the device status attribute(self.dev_status).
 
-        :param p: Position to read, to obtain the position is recommended to
+        :param p: Position to read, to get the position is recommended to
         use STATUS[<key>], where key should be the name of a valid field of
         the status structure.
         :return: Integer, stored in the given position.
@@ -219,6 +220,14 @@ class TerminalMixin:
         :return: String.
         """
         return self.get_device_info("~Platform")
+
+    def get_pinwidth(self):
+        """
+        Requests the max size of the user ID field.
+
+        :return: Integer, allowed size for users ID.
+        """
+        return int(self.get_device_info('~PIN2Width').replace('\x00',''))
 
     def get_firmware_version(self):
         """
