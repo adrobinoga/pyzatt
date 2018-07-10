@@ -15,6 +15,27 @@ WARNING: Apply this test to devices that aren't under current use,
 Author: Alexander Marin <alexanderm2230@gmail.com>
 """
 
+def enroll(id, fp_idx, fp_flag):
+    print_info("Enrolling user:")
+    print("User ID = ", id)
+    print("Finger index = ", fp_idx)
+    print("Fingerprint type = ", fp_flag)
+
+    print_info("Delete previous fingerprint")
+    z.delete_fp(id, fp_idx)
+
+    print_info("Ready to enroll!")
+    if z.enroll_user(id, fp_idx, fp_flag):
+        print("Enrolling was successful")
+        print_info("After enrolling")
+        z.read_all_user_id()
+        z.read_all_fptmp()
+        z.print_users_summary()
+        input("Press ENTER")
+
+    else:
+        print("Something went wrong")
+
 time.sleep(0)  # sometimes a delay is useful to se
 
 ip_address = '192.168.19.152'  # set the ip address of the device to test
@@ -23,27 +44,25 @@ machine_port = 4370
 z = pyzk.ZKSS()
 z.connect_net(ip_address, machine_port)
 
-# connection
-print_header("1. Enrolling a user")
+print_header("1. Enrolling a users fingerprints")
 
-# parameters for enrolling procedure
-user_id = "123999888"
-finger_index = 9
-fp_flag = 1
+print_info("Before enrolling users")
+z.refresh_data()
+z.read_all_user_id()
+z.read_all_fptmp()
+z.print_users_summary()
 
-print_info("Enrolling user:")
-print_info("User ID = ", user_id)
-print_info("Finger index = ", finger_index)
-print_info("Fingerprint type = ", fp_flag)
+print_info("Enrolling User 1")
+enroll(id='8888', fp_idx=4, fp_flag=1)
 
-print_info("If the given fingerprint exists, then delete it")
-if z.fp_exists(user_id, finger_index):
-    print_info("Deleting fingerprint")
-    z.delete_fp(user_id, finger_index)
+print_info("Enrolling User 2")
+enroll(id='9999', fp_idx=6, fp_flag=1)
 
-if z.start_enroll(user_id, finger_index, fp_flag):
-    print("Enrolling was successful")
-else:
-    print("Something went wrong")
+print_info("After enrolling users")
+z.refresh_data()
+z.read_all_user_id()
+z.read_all_fptmp()
+z.print_users_summary()
 
+z.enable_device()
 z.disconnect()
