@@ -10,6 +10,7 @@ Author: Alexander Marin <alexanderm2230@gmail.com>
 
 
 class PacketMixin:
+
     def create_packet(self, cmd_code, data=None, session_id=None,
                       reply_number=None):
         """
@@ -31,13 +32,13 @@ class PacketMixin:
         zk_packet.extend([0x00] * 2)  # checksum field
 
         # append session id
-        if not session_id:
+        if session_id is None:
             zk_packet.extend(struct.pack('<H', self.session_id))
         else:
             zk_packet.extend(struct.pack('<H', session_id))
 
         # append reply number
-        if not reply_number:
+        if reply_number is None:
             zk_packet.extend(struct.pack('<H', self.reply_number))
         else:
             zk_packet.extend(struct.pack('<H', reply_number))
@@ -67,15 +68,14 @@ class PacketMixin:
         - self.last_payload_data
 
         :return: Bytearray, received data,
-        also stored in self.last_payload_data.
+        also stored in last_payload_data.
         """
         zkp = self.soc_zk.recv(buff_size)
         zkp = bytearray(zkp)
         self.parse_ans(zkp)
         self.reply_number += 1
-        return zkp
 
-    def recv_long_reply(self, buff_size=1024):
+    def recv_long_reply(self, buff_size=4096):
         """
         Receives a large dataset from the device.
 
@@ -83,13 +83,14 @@ class PacketMixin:
         if not specified, is set to 1024.
         :return: Bytearray, received dataset.
         """
-        zkp = bytearray(self.soc_zk.recv(buff_size))
+        zkp = self.recv_packet(buff_size)
         self.parse_ans(zkp)
         self.reply_number += 1
 
-        if self.last_reply_code == CMD_DATA_WRRQ:
+        dataset = bytearray([])
+        if self.last_reply_code == CMD_DATA:
             # device sent the dataset immediately ie short dataset
-            zkp = self.last_payload_data
+            dataset = self.last_payload_data
         else:
             # device sent the dataset with additional commands, ie longer
             # dataset, see ex_data spec
@@ -102,31 +103,37 @@ class PacketMixin:
             self.send_command(CMD_DATA_RDY, data=bytearray(rdy_struct))
 
             # receives the prepare data reply
-            print_h(bytearray(self.soc_zk.recv(buff_size)))
+            self.recv_packet(buff_size)
 
             # receives the packet with the long dataset
-            zkp = self.soc_zk.recv(buff_size)
+            zkp = self.recv_packet(buff_size)
+
             # extracts size of the total packet
-            total_size = 8 + struct.unpack('<H', zkp[4:6])
+            total_size = 8 + struct.unpack('<H', zkp[4:6])[0]
             rem_recv = total_size - len(zkp)
+
             # keeps reading until it receives the complete dataset packet
             while len(zkp) < total_size:
-                zkp += self.soc_zk.recv(rem_recv)
+                zkp += self.recv_packet(rem_recv)
                 rem_recv = total_size - len(zkp)
+            self.parse_ans(zkp)
+            dataset = self.last_payload_data
 
             # receives the acknowledge after the dataset packet
-            bytearray(self.soc_zk.recv(buff_size))
+            self.recv_packet(buff_size)
 
             # increment reply number and send "free data" command
             self.reply_number += 1
             self.send_command(CMD_FREE_DATA)
+
             # receive acknowledge
-            bytearray(self.soc_zk.recv(buff_size))
+            self.recv_packet(buff_size)
 
+        # update reply counter
         self.reply_number += 1
-        return zkp
+        return dataset
 
-    def recv_packet(self, buff_size=1024):
+    def recv_packet(self, buff_size=4096):
         """
         Receives data from the device.
 
@@ -135,6 +142,26 @@ class PacketMixin:
         :return: Bytearray, received data.
         """
         return bytearray(self.soc_zk.recv(buff_size))
+
+    def recv_event(self):
+        """
+        Receives an event from the machine and sends an acknowledge reply.
+
+        :return: None,
+        stores the code of the event in the last_event_code variable,
+        it also stores the data contents in the last_payload_data variable.
+        """
+        self.parse_ans(self.recv_packet())
+        self.last_event_code = self.last_session_code
+        self.send_packet(self.create_packet(CMD_ACK_OK, reply_number=0))
+
+    def get_last_packet(self):
+        """
+        Returns the last received packet.
+
+        :return: Bytearray, a whole packet.
+        """
+        return self.last_packet
 
     def send_command(self, cmd, data=None):
         """
@@ -146,7 +173,7 @@ class PacketMixin:
         of the payload.
         :return: None.
         """
-        self.soc_zk.send(self.create_packet(cmd, data))
+        self.send_packet(self.create_packet(cmd, data))
 
     def send_packet(self, zkp):
         """
@@ -170,8 +197,14 @@ class PacketMixin:
         :param zkp: Bytearray, packet.
         :return: Bool, returns True if the packet is valid, False otherwise.
         """
+        self.last_reply_code = -1
+        self.last_session_code = -1
+        self.last_reply_counter = -1
+        self.last_payload_data = bytearray([])
+
         # check the start tag
         if not zkp[0:4] == START_TAG:
+            print("Bad start tag")
             return False
 
         # extracts size of packet
@@ -179,9 +212,12 @@ class PacketMixin:
 
         # checks the checksum field
         if not is_valid_payload(zkp[8:]):
+            print("Invalid checksum")
             return False
 
         # stores the packet fields to the listed attributes
+
+        self.last_packet = zkp
 
         self.last_reply_code = struct.unpack('<H', zkp[8:10])[0]
 
