@@ -10,7 +10,7 @@ Test script to test/show several functions of the terminal spec/lib.
 
 WARNING: Apply this test to devices that aren't under current use,
     if a deployed device is used, remember to upload the data to
-    the device(Sync) using the ZKAccess software, that would
+    the device(Sync) using the ZKAccess software, that will
     overwrite any changes made by the script.
 
 Author: Alexander Marin <alexanderm2230@gmail.com>
