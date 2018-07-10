@@ -133,3 +133,21 @@ def get_status_keys():
     :return: List of strings, with the status field names.
     """
     return STATUS.keys()
+
+# verification styles
+GROUP_VERIFY = 0
+FPorPWorRF = 0x80
+FP = 0x81
+PIN = 0x82
+PW = 0x83
+RF = 0x84
+FPorPW = 0x85
+FPorRF = 0x86
+PWorRF = 0x87
+PINandFP = 0x88
+FPandPW = 0x89
+FPandRF = 0x8a
+PWandRF = 0x8b
+FPandPWandRF = 0x8c
+PINandFPandPW = 0x8d
+FPandRForPIN = 0x8e
