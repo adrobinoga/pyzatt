@@ -32,17 +32,18 @@ z.disable_device()
 
 print_header("1.Read all user info")
 
+# delete user if it exists
+user1_id = "5555"
+if z.id_exists(user1_id):
+    z.delete_user(user1_id)
+
 z.read_all_user_id()
 z.read_all_fptmp()
 z.print_users_summary()
 
 print_header("2.Changing verification mode")
 
-# create user
-user1_id = "5555"
-if z.id_exists(user1_id):
-    z.delete_user(user1_id)
-
+# set user params
 z.set_user_info(user_id=user1_id, name="Dummy 1",
                 password="22224444", card_no=333,
                 admin_lv=0, neg_enabled=0,
@@ -103,8 +104,11 @@ if os.path.isfile(fp1_fn) and os.path.isfile(fp2_fn):
 
 else:
     print("Run the script test_data_other.py before this script!")
+    z.enable_device()
+    z.disconnect()
+    exit(0)
 
-ans = input("Delete user %s, y/n" % user1_id)
+ans = input("Delete user %s, y/n: " % user1_id)
 if ans == 'y':
     z.delete_user(user1_id)
 else:
