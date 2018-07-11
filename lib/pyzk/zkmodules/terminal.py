@@ -92,7 +92,9 @@ class TerminalMixin:
 
         :param stat_keys: Dictionary, with the keys to request, the values
         of the given keys are overwritten with the output values.
-        Example: {admin_count: -1, user_count: -1}
+
+        Example: {admin_count: -1, user_count: -1}.
+
         :return: Dictionary, the output is given on the same input dict.
         """
         # request status structure
