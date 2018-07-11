@@ -107,3 +107,24 @@ class DataRecordMixin:
         self.send_command(cmd=CMD_CLEAR_OPLOG)
         self.recv_reply()
         self.refresh_data()
+
+    def clear_data(self, data_type=None):
+        """
+        Deletes types of data.
+
+        :param data_type: Integer, selects the data to be
+        deleted on the machine. According to the next list:
+
+        1. Attendance records.
+        2. Fingerprint templates.
+        4. Operation logs.
+        5. User info.
+
+        :return: None.
+        """
+        if data_type:
+            self.send_command(cmd=CMD_CLEAR_DATA, data=bytearray(data_type))
+        else:
+            self.send_command(cmd=CMD_CLEAR_DATA)
+        self.recv_reply()
+        self.refresh_data()
