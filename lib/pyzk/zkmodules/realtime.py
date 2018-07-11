@@ -123,7 +123,7 @@ class RealtimeMixin:
         """
         score = -1
         if self.last_event_code == EF_FPFTR:
-            score = self.last_payloda_data[0]
+            score = self.last_payload_data[0]
         return score
 
     def wait_for_fingerscore(self):
