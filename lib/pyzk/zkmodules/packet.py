@@ -81,18 +81,42 @@ class PacketMixin:
 
         :param buff_size: Int, maximum amount of data to receive,
         if not specified, is set to 1024.
-        :return: Bytearray, received dataset.
+        :return: Bytearray, received dataset, if the it extract the dataset,
+        returns an emtpy bytearray.
         """
         zkp = self.recv_packet(buff_size)
         self.parse_ans(zkp)
         self.reply_number += 1
 
         dataset = bytearray([])
+
         if self.last_reply_code == CMD_DATA:
-            # device sent the dataset immediately ie short dataset
+            # device sent the dataset immediately, i.e. short dataset
             dataset = self.last_payload_data
-        else:
-            # device sent the dataset with additional commands, ie longer
+
+        elif self.last_reply_code == CMD_PREPARE_DATA:
+            # seen on fp template download procedure
+
+            # receives first part of the packet with the long dataset
+            zkp = self.recv_packet(16)
+
+            # extracts size of the total packet
+            total_size = 8 + struct.unpack('<H', zkp[4:6])[0]
+            rem_recv = total_size - len(zkp)
+            # keeps reading until it receives the complete dataset packet
+            while len(zkp) < total_size:
+                zkp += self.recv_packet(rem_recv)
+                rem_recv = total_size - len(zkp)
+
+            self.parse_ans(zkp)
+
+            dataset = self.last_payload_data
+
+            # receives the acknowledge after the dataset packet
+            self.recv_packet(buff_size)
+
+        elif self.last_reply_code == CMD_ACK_OK:
+            # device sent the dataset with additional commands, i.e. longer
             # dataset, see ex_data spec
             size_info = struct.unpack('<I', self.last_payload_data[1:5])[0]
 
@@ -103,10 +127,10 @@ class PacketMixin:
             self.send_command(CMD_DATA_RDY, data=bytearray(rdy_struct))
 
             # receives the prepare data reply
-            self.recv_packet(buff_size)
+            self.recv_packet(24)
 
-            # receives the packet with the long dataset
-            zkp = self.recv_packet(buff_size)
+            # receives the first part of the packet with the long dataset
+            zkp = self.recv_packet(16)
 
             # extracts size of the total packet
             total_size = 8 + struct.unpack('<H', zkp[4:6])[0]
@@ -129,8 +153,9 @@ class PacketMixin:
             # receive acknowledge
             self.recv_packet(buff_size)
 
-        # update reply counter
-        self.reply_number += 1
+            # update reply counter
+            self.reply_number += 1
+
         return dataset
 
     def recv_packet(self, buff_size=4096):
