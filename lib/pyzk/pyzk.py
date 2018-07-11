@@ -25,15 +25,19 @@ class ZKUser:
         self.user_id = ''           # user's id
         self.user_name = ''         # user's name
         self.user_password = ''     # user's password
-        self.card_number = None     # user's RF card number
+        self.card_number = 0        # user's RF card number
         self.admin_level = 0        # user's admin level
         self.not_enabled = 1        # user's enable flag(active=0)
         # user's fingerprint templates
         # with the format [fp template, fp flag]
-        self.user_fptmps = [[0,0]]*10
+        self.user_fptmps = [[0, 0]]*10
+        self.user_group = 1
+        self.user_tzs = [1, 0, 0]
 
-    def set_user_info(self, user_sn, user_id, name, password,
-                      card_no, admin_lv, neg_enabled):
+    def set_user_info(self, user_sn, user_id, name="",
+                      password="", card_no=0,
+                      admin_lv=0, neg_enabled=0,
+                      user_group=1, user_tzs=[1, 0, 0]):
         """
         Changes the user data fields.
 
@@ -45,6 +49,10 @@ class ZKUser:
         :param admin_lv: Integer, user admin level.
         :param neg_enabled: Integer, user enable flag,
         (0=enabled, 1=disabled).
+        :param user_group: Integer, group number to which the user belongs.
+        :param user_tzs: List of integers, timezones of the user, if it is
+        an empty array, it should be assumed that the user is using the
+        group's timezones.
         :return:None.
         """
         self.user_sn = user_sn
@@ -54,6 +62,8 @@ class ZKUser:
         self.card_number = card_no
         self.admin_level = admin_lv
         self.not_enabled = neg_enabled
+        self.user_group = user_group
+        self.user_tzs = user_tzs
 
     def get_sn(self):
         """
@@ -73,6 +83,29 @@ class ZKUser:
         :return: None.
         """
         self.user_fptmps[fp_index] = [fp_tmp, fp_flag]
+
+    def ser_user(self):
+        """
+        Builds user entry.
+
+        :return: Bytearray, with the users info.
+        """
+        user_info = bytearray([0x00] * 72)
+        user_info[0:2] = struct.pack('<H', self.user_sn)
+        user_info[2] = (self.admin_level << 1) | self.not_enabled
+        user_info[3:3+len(self.user_password)] = self.user_password.encode()
+        user_info[11:11+len(self.user_name)] = self.user_name.encode()
+        user_info[35:39] = struct.pack('<I', self.card_number)
+        user_info[39] = self.user_group
+
+        if len(self.user_tzs) != 0:
+            user_info[40:42] = bytes([1, 0])
+            user_info[42:44] = struct.pack('<H', self.user_tzs[0])
+            user_info[44:46] = struct.pack('<H', self.user_tzs[1])
+            user_info[46:48] = struct.pack('<H', self.user_tzs[2])
+
+        user_info[48:48 + len(self.user_id)] = self.user_id.encode()
+        return user_info
 
 
 class ATTen:
@@ -137,7 +170,19 @@ class ZKSS(PacketMixin, DataUserMixin,
         :param user_sn: Integer, user's index on machine.
         :return: None.
         """
-        self.users[user_sn] = ZKUser()
+        if user_sn not in self.users:
+            self.users[user_sn] = ZKUser()
+
+    def id_exists(self, user_id):
+        for sn in self.users:
+            if self.users[sn].user_id == user_id:
+                return True
+        return False
+
+    def create_user(self):
+        new_user_sn = max(list(self.users.keys()))+1
+        self.add_user(new_user_sn)
+        return new_user_sn
 
     def print_users_summary(self, users_sns=None):
         """
@@ -154,7 +199,8 @@ class ZKSS(PacketMixin, DataUserMixin,
         # create users info table
         # fields to show
         t_headers = ['User internal index', 'User ID', 'User name',
-                     'Password', 'Card number', 'Admin level', 'Enabled']
+                     'Password', 'Card number', 'Admin level', 'Enabled',
+                     'Group number', 'Timezones']
 
         summ_table = PrettyTable(t_headers)
 
@@ -168,7 +214,9 @@ class ZKSS(PacketMixin, DataUserMixin,
                                 zuser.user_password,
                                 zuser.card_number,
                                 zuser.admin_level,
-                                True if zuser.not_enabled == 0 else False
+                                True if zuser.not_enabled == 0 else False,
+                                zuser.user_group,
+                                zuser.user_tzs
                                 ])
         # show table
         print(summ_table)
@@ -260,9 +308,9 @@ class ZKSS(PacketMixin, DataUserMixin,
         :return: Integer, user's index on machine,
         if the user doesn't exists, returns -1.
         """
-        for sn in list(self.users):
+        for sn in self.users:
             if self.users[sn].user_id == user_id:
-                return user_id
+                return sn
         return -1
 
     def append_att_entry(self, user_sn, user_id, ver_type,
