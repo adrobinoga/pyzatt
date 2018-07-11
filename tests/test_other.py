@@ -3,6 +3,7 @@ import time
 from utils import *
 import pyzk.pyzk as pyzk
 import pyzk.zkmodules.defs as defs
+from pyzk.misc import *
 
 """
 Test script to test/show several functions of the "other" spec/lib.
@@ -27,12 +28,8 @@ def enroll(id, fp_idx, fp_flag):
     print_info("Ready to enroll!")
     if z.enroll_user(id, fp_idx, fp_flag):
         print("Enrolling was successful")
-        print_info("After enrolling")
         z.read_all_user_id()
-        z.read_all_fptmp()
-        z.print_users_summary()
-        input("Press ENTER")
-
+        z.refresh_data()
     else:
         print("Something went wrong")
 
@@ -47,19 +44,30 @@ z.connect_net(ip_address, machine_port)
 print_header("1. Enrolling a users fingerprints")
 
 print_info("Before enrolling users")
-z.refresh_data()
 z.read_all_user_id()
 z.read_all_fptmp()
 z.print_users_summary()
 
 print_info("Enrolling User 1")
-enroll(id='8888', fp_idx=4, fp_flag=1)
+user1_id = "8888"
+user1_fp_idx = 4
+enroll(id=user1_id, fp_idx=user1_fp_idx, fp_flag=1)
 
+z.disable_device()
+with open('fp1.bin', 'wb') as outfile:
+    outfile.write(z.download_fp(user1_id, user1_fp_idx))
+
+z.enable_device()
 print_info("Enrolling User 2")
-enroll(id='9999', fp_idx=6, fp_flag=1)
+user2_id = "9999"
+user2_fp_idx = 3
+enroll(id=user2_id, fp_idx=user2_fp_idx, fp_flag=1)
+
+z.disable_device()
+with open('fp2.bin', 'wb') as outfile:
+    outfile.write(z.download_fp(user2_id, user2_fp_idx))
 
 print_info("After enrolling users")
-z.refresh_data()
 z.read_all_user_id()
 z.read_all_fptmp()
 z.print_users_summary()
