@@ -11,6 +11,16 @@ Author: Alexander Marin <alexanderm2230@gmail.com>
 
 class RealtimeMixin:
 
+    def enable_realtime(self):
+        """
+        Sends command to enable realtime events.
+
+        :return: None.
+        """
+        self.send_command(cmd=CMD_REG_EVENT,
+                          data=bytearray([0xff, 0xff, 0x00, 0x00]))
+        self.recv_reply()
+
     def get_last_event(self):
         """
         Returns the last event code.
