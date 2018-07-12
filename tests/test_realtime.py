@@ -4,7 +4,7 @@ import time
 import datetime
 from utils import *
 import pyzk.pyzk as pyzk
-import pyzk.zkmodules.defs as defs
+from pyzk.zkmodules.defs import *
 from pyzk.misc import *
 
 """
@@ -31,6 +31,14 @@ print_header("TEST OF REALTIME FUNCTIONS")
 print_header("1.Realtime Test")
 z.connect_net(ip_address, machine_port)
 
+# read user ids
+z.disable_device()
+z.read_all_user_id()
+z.enable_device()
+
+# enable the report of rt packets
+z.enable_realtime()
+
 print_info("Ready to receive events from the machine")
 
 try:
@@ -40,6 +48,7 @@ try:
         ev = z.get_last_event()
 
         # process the event
+        print("\n"+"#"*50)
         print("Received event")
 
         if ev == EF_ALARM:
@@ -75,7 +84,7 @@ try:
         elif ev == EF_ATTLOG:
             print("EF_ATTLOG: New attendance entry")
             print("User id: %s, verify type %i, date: %s" %
-                  z.parse_event_attlog())
+                  tuple(z.parse_event_attlog()))
 
         elif ev == EF_FINGER:
             print("EF_FINGER: Finger placed on reader")
@@ -97,7 +106,12 @@ try:
 
         elif ev == EF_VERIFY:
             print("EF_VERIFY: Verified user")
-            print("User id: %s" % tuple(z.parse_verify_event()))
+            user_sn = z.parse_verify_event()
+            if user_sn == 0xffffffff:
+                user_id = '-1'
+            else:
+                user_id = z.users[user_sn].user_id
+            print("User id: %s" % user_id)
 
         elif ev == EF_FPFTR:
             print("EF_FPFTR: ")
