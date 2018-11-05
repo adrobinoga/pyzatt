@@ -46,7 +46,7 @@ class DataUserMixin:
                 password = ''
 
             # extract user name
-            user_name = users_dataset[i+11:i+35].decode('ascii')
+            user_name = users_dataset[i+11:i+35].decode('utf-8')
 
             # remove non printable chars
             user_name = user_name.replace('\x00', '')
