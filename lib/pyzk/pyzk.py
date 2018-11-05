@@ -180,7 +180,10 @@ class ZKSS(PacketMixin, DataUserMixin,
         return False
 
     def create_user(self):
-        new_user_sn = max(list(self.users.keys()))+1
+        try:
+            new_user_sn = max(list(self.users.keys()))+1
+        except:
+            new_user_sn = 1
         self.add_user(new_user_sn)
         return new_user_sn
 
