@@ -1,6 +1,7 @@
 import binascii
 import struct
 import datetime
+from colorama import Fore, Style
 
 """
 This file contains several functions needed to encode and decode values, some
@@ -8,6 +9,28 @@ functions useful for debugging are also included.
 
 Author: Alexander Marin <alexanderm2230@gmail.com>
 """
+
+
+hhh = 80*'#'
+
+
+def print_info(s):
+    """
+    Prints text in green bright font.
+
+    :param s: String, text to be printed.
+    :return: None.
+    """
+    print(Style.BRIGHT + Fore.GREEN + s +Style.RESET_ALL)
+
+
+def print_header(s):
+    """
+    Prints a title in green bright font.
+    :param s: String, text to be printed.
+    :return: None.
+    """
+    print_info('\n' + hhh + '\n#\t' + s + '\n')
 
 
 def print_h(arr):
