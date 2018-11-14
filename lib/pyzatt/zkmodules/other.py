@@ -1,5 +1,5 @@
 import struct
-from pyzk.zkmodules.defs import *
+from pyzatt.zkmodules.defs import *
 
 """
 This file contains the functions related to the other procedures listed

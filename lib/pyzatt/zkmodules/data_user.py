@@ -1,5 +1,5 @@
-from pyzk.zkmodules.defs import *
-from pyzk.misc import *
+from pyzatt.zkmodules.defs import *
+from pyzatt.misc import *
 
 """
 This file contains the functions to manage the user's data, fingerprints,
