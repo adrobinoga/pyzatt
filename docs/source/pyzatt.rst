@@ -1,28 +1,28 @@
-pyzk package
-============
+pyzatt package
+==============
 
 Subpackages
 -----------
 
 .. toctree::
 
-    pyzk.zkmodules
+    pyzatt.zkmodules
 
 Submodules
 ----------
 
-pyzk.misc module
-----------------
+pyzatt.misc module
+------------------
 
-.. automodule:: pyzk.misc
+.. automodule:: pyzatt.misc
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyzk.pyzk module
-----------------
+pyzatt.pyzatt module
+--------------------
 
-.. automodule:: pyzk.pyzk
+.. automodule:: pyzatt.pyzatt
     :members:
     :undoc-members:
     :show-inheritance:
@@ -31,7 +31,7 @@ pyzk.pyzk module
 Module contents
 ---------------
 
-.. automodule:: pyzk
+.. automodule:: pyzatt
     :members:
     :undoc-members:
     :show-inheritance:
