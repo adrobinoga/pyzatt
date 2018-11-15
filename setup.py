@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='PyZatt',
-    version='1.0',
+    version='2.0.0',
     description='Python lib to manage ZKTeco attendance devices',
     long_description=long_description,
     long_description_content_type="text/markdown",
