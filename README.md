@@ -1,8 +1,25 @@
-# PyZK #
+# PyZatt #
+
+++(Recently the name of lib was changed to PyZatt to avoid conflict with other PyPI packages)++
 
 Python lib to access ZKTeco's standalone devices
 
 This project is part of an effort to make an alternative to the ZKTeco's software, to manage the attendance devices, it was made based on the protocol spec shown in [zk-protocol](https://github.com/adrobinoga/zk-protocol) repo.
+
+## Installation ##
+
+This lib may be installed using the setup file or generating the wheel file, to generate the wheel
+file use:
+
+	$ make build
+
+Then the wheel file will be created in dist directory, which can be installed using pip:
+
+	$ pip install dist/PyZatt-2.0.0-py3-none-any.whl --user
+
+To **uninstall** the lib use:
+
+	$ pip uninstall pyzatt
 
 ## Tests ##
 
