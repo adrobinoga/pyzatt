@@ -2,10 +2,9 @@
 
 import time
 import datetime
-from utils import *
-import pyzk.pyzk as pyzk
-from pyzk.zkmodules.defs import *
-from pyzk.misc import *
+from pyzatt.misc import *
+import pyzatt.pyzatt as pyzatt
+from pyzatt.zkmodules.defs import *
 
 """
 Test script to test/show parsing functions of the realtime spec/lib.
@@ -23,7 +22,7 @@ time.sleep(0)  # sometimes a delay is useful to se
 ip_address = '192.168.19.152'  # set the ip address of the device to test
 machine_port = 4370
 
-z = pyzk.ZKSS()
+z = pyzatt.ZKSS()
 
 print_header("TEST OF REALTIME FUNCTIONS")
 

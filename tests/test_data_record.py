@@ -1,9 +1,9 @@
 #!/usr/bin/python3.5
 import time
 import datetime
-from utils import *
-import pyzk.pyzk as pyzk
-import pyzk.zkmodules.defs as defs
+from pyzatt.misc import *
+import pyzatt.pyzatt as pyzatt
+import pyzatt.zkmodules.defs as defs
 
 """
 Test script to test/show several functions of the data-record spec/lib.
@@ -21,7 +21,7 @@ time.sleep(0)  # sometimes a delay is useful to se
 ip_address = '192.168.19.152'  # set the ip address of the device to test
 machine_port = 4370
 
-z = pyzk.ZKSS()
+z = pyzatt.ZKSS()
 
 print_header("TEST OF DATA-RECORD FUNCTIONS")
 

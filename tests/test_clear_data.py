@@ -1,9 +1,8 @@
 #!/usr/bin/python3.5
 import time
-import os.path
-from utils import *
-import pyzk.pyzk as pyzk
-from pyzk.zkmodules.defs import *
+from pyzatt.misc import *
+import pyzatt.pyzatt as pyzatt
+from pyzatt.zkmodules.defs import *
 
 """
 Test script to clear data on the machine
@@ -21,7 +20,7 @@ time.sleep(0)
 ip_address = '192.168.19.152'  # set the ip address of the device to test
 machine_port = 4370
 
-z = pyzk.ZKSS()
+z = pyzatt.ZKSS()
 z.connect_net(ip_address, machine_port)
 z.disable_device()
 

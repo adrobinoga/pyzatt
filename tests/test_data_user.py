@@ -1,9 +1,9 @@
 #!/usr/bin/python3.5
 import time
 import os.path
-from utils import *
-import pyzk.pyzk as pyzk
-from pyzk.zkmodules.defs import *
+from pyzatt.misc import *
+import pyzatt.pyzatt as pyzatt
+from pyzatt.zkmodules.defs import *
 
 """
 Test script to test/show several functions of the data-user spec/lib.
@@ -26,7 +26,7 @@ machine_port = 4370
 
 print_header("TEST OF DATA-USER FUNCTIONS")
 
-z = pyzk.ZKSS()
+z = pyzatt.ZKSS()
 z.connect_net(ip_address, machine_port)
 z.disable_device()
 

@@ -1,9 +1,8 @@
 #!/usr/bin/python3.5
 import time
-from utils import *
-import pyzk.pyzk as pyzk
-import pyzk.zkmodules.defs as defs
-from pyzk.misc import *
+from pyzatt.misc import *
+import pyzatt.pyzatt as pyzatt
+import pyzatt.zkmodules.defs as defs
 
 """
 Test script to test/show several functions of the "other" spec/lib.
@@ -38,7 +37,7 @@ time.sleep(0)  # sometimes a delay is useful to se
 ip_address = '192.168.19.152'  # set the ip address of the device to test
 machine_port = 4370
 
-z = pyzk.ZKSS()
+z = pyzatt.ZKSS()
 z.connect_net(ip_address, machine_port)
 
 print_header("1. Enrolling a users fingerprints")
