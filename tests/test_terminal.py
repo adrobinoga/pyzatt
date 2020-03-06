@@ -1,4 +1,4 @@
-#!/usr/bin/python3.5
+#!/usr/bin/env python
 import time
 import datetime
 import pyzatt.pyzatt as pyzatt

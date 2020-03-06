@@ -1,5 +1,5 @@
-lib
-===
+pyzatt
+======
 
 .. toctree::
    :maxdepth: 4

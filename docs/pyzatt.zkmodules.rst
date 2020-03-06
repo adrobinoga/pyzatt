@@ -12,16 +12,16 @@ pyzatt.zkmodules.access module
     :undoc-members:
     :show-inheritance:
 
-pyzatt.zkmodules.data_record module
------------------------------------
+pyzatt.zkmodules.data\_record module
+------------------------------------
 
 .. automodule:: pyzatt.zkmodules.data_record
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyzatt.zkmodules.data_user module
----------------------------------
+pyzatt.zkmodules.data\_user module
+----------------------------------
 
 .. automodule:: pyzatt.zkmodules.data_user
     :members:
