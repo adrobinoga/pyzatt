@@ -14,6 +14,6 @@ setup(name='PyZatt',
     packages=find_packages('lib'),
     package_dir={'': 'lib'},
     install_requires=[
-          'prettytable', 'colorama',
+          'prettytable', 'colorama', 'hexdump',
     ]
     )

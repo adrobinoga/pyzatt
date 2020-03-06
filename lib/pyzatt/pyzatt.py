@@ -7,6 +7,7 @@ from pyzatt.zkmodules.realtime import RealtimeMixin
 from pyzatt.zkmodules.other import OtherMixin
 from prettytable import PrettyTable
 from pyzatt.misc import *
+from pyzatt.zkmodules.defs import *
 import binascii
 
 """
@@ -161,6 +162,7 @@ class ZKSS(PacketMixin, DataUserMixin,
         self.users = {}                 # dict of ZKUser, the key is the id
         self.att_log = []               # list of attendance entries
         self.op_log = []                # list of operation entries
+        self.dev_type = TFT_DEV         # device family (BW_DEV, TFT_DEV)
 
     def add_user(self, user_sn):
         """

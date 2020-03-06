@@ -25,9 +25,13 @@ class PacketMixin:
         the reply number is obtained from context.
         :return:
         """
-        zk_packet = bytearray(START_TAG)  # fixed tag
-        zk_packet.extend([0x00] * 2)  # size of payload
-        zk_packet.extend([0x00] * 2)  # fixed zeros
+        zk_packet = bytearray()
+
+        if self.dev_type == TFT_DEV:
+            zk_packet.extend(START_TAG)  # fixed tag
+            zk_packet.extend([0x00] * 2)  # size of payload
+            zk_packet.extend([0x00] * 2)  # fixed zeros
+
         zk_packet.extend(struct.pack('<H', cmd_code))  # cmd code / reply id
         zk_packet.extend([0x00] * 2)  # checksum field
 
@@ -166,7 +170,10 @@ class PacketMixin:
         if not specified, is set to 1024.
         :return: Bytearray, received data.
         """
-        return bytearray(self.soc_zk.recv(buff_size))
+        if self.dev_type == TFT_DEV:
+            return bytearray(self.soc_zk.recv(buff_size))
+        else:
+            return bytearray(self.soc_zk.recvfrom(buff_size, self.server_address))
 
     def recv_event(self):
         """
@@ -207,7 +214,10 @@ class PacketMixin:
         :param zkp: Bytearray, packet to send.
         :return: None.
         """
-        self.soc_zk.send(zkp)
+        if self.dev_type == TFT_DEV:
+            self.soc_zk.send(zkp)
+        else:
+            self.soc_zk.sendto(zkp, self.server_address)
 
     def parse_ans(self, zkp):
         """
@@ -227,30 +237,49 @@ class PacketMixin:
         self.last_reply_counter = -1
         self.last_payload_data = bytearray([])
 
-        # check the start tag
-        if not zkp[0:4] == START_TAG:
-            print("Bad start tag")
-            return False
+        if self.dev_type == TFT_DEV:
+            # check the start tag
+            if not zkp[0:4] == START_TAG:
+                print("Bad start tag")
+                return False
 
-        # extracts size of packet
-        self.last_reply_size = struct.unpack('<I', zkp[4:8])[0]
+            # extracts size of packet
+            self.last_reply_size = struct.unpack('<I', zkp[4:8])[0]
 
-        # checks the checksum field
-        if not is_valid_payload(zkp[8:]):
-            print("Invalid checksum")
-            return False
+            # checks the checksum field
+            if not is_valid_payload(zkp[8:]):
+                print("Invalid checksum")
+                return False
 
-        # stores the packet fields to the listed attributes
+            # stores the packet fields to the listed attributes
 
-        self.last_packet = zkp
+            self.last_packet = zkp
 
-        self.last_reply_code = struct.unpack('<H', zkp[8:10])[0]
+            self.last_reply_code = struct.unpack('<H', zkp[8:10])[0]
 
-        self.last_session_code = struct.unpack('<H', zkp[12:14])[0]
+            self.last_session_code = struct.unpack('<H', zkp[12:14])[0]
 
-        self.last_reply_counter = struct.unpack('<H', zkp[14:16])[0]
+            self.last_reply_counter = struct.unpack('<H', zkp[14:16])[0]
 
-        self.last_payload_data = zkp[16:]
+            self.last_payload_data = zkp[16:]
+
+        else:
+            # checks the checksum field
+            if not is_valid_payload(zkp):
+                print("Invalid checksum")
+                return False
+
+            # stores the packet fields to the listed attributes
+
+            self.last_packet = zkp
+
+            self.last_reply_code = struct.unpack('<H', zkp[0:2])[0]
+
+            self.last_session_code = struct.unpack('<H', zkp[4:6])[0]
+
+            self.last_reply_counter = struct.unpack('<H', zkp[6:8])[0]
+
+            self.last_payload_data = zkp[8:]
 
     def recvd_ack(self):
         """

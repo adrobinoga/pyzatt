@@ -2,6 +2,7 @@ import socket
 import struct
 from pyzatt.zkmodules.defs import *
 from pyzatt.misc import *
+import errno
 
 """
 This file contains the functions of the "terminal" protocol spec
@@ -27,7 +28,19 @@ class TerminalMixin:
 
         # connects to machine
         self.soc_zk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.soc_zk.connect((ip_addr, dev_port))
+
+        try:
+            self.soc_zk.connect((ip_addr, dev_port))
+
+        except socket.error as serror:
+            if serror.errno != errno.ECONNREFUSED:
+                raise serror
+            else:
+                # try connection to BW dev (UDP)
+                self.soc_zk = socket.socket(socket.AF_INET,
+                                            socket.SOCK_DGRAM)
+                self.dev_type = BW_DEV
+                self.server_address = (ip_addr, dev_port)
 
         # send connect command
         self.send_command(CMD_CONNECT)
@@ -41,7 +54,7 @@ class TerminalMixin:
         # set SDKBuild variable of the device
         self.set_device_info('SDKBuild', '1')
 
-        # check reply code
+        # check last reply code
         self.connected_flg = self.recvd_ack()
         return self.connected_flg
 

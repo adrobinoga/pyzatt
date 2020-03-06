@@ -6,6 +6,10 @@ implementation.
 Author: Alexander Marin <alexanderm2230@gmail.com>
 """
 
+# device types
+BW_DEV = 0      # Black and white device
+TFT_DEV = 1     # TFT series device
+
 # fixed arrays
 START_TAG = bytearray([0x50,0x50,0x82,0x7D])
 SHORT_ZERO = bytearray([0x00]*2)

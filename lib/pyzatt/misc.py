@@ -1,6 +1,7 @@
 import binascii
 import struct
 import datetime
+import hexdump
 from colorama import Fore, Style
 
 """
@@ -42,6 +43,8 @@ def print_h(arr):
     """
     print(binascii.hexlify(arr))
 
+def print_hexdump(arr):
+    print(hexdump.hexdump(arr.decode()))
 
 def is_valid_payload(p):
     """

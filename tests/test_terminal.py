@@ -18,7 +18,7 @@ Author: Alexander Marin <alexanderm2230@gmail.com>
 
 time.sleep(0)  # sometimes a delay is useful to se
 
-ip_address = '192.168.19.152'  # set the ip address of the device to test
+ip_address = 'localhost'  # set the ip address of the device to test
 machine_port = 4370
 
 z = pyzatt.ZKSS()
