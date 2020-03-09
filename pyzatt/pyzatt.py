@@ -1,12 +1,12 @@
-from pyzk.zkmodules.packet import PacketMixin
-from pyzk.zkmodules.data_user import DataUserMixin
-from pyzk.zkmodules.data_record import DataRecordMixin
-from pyzk.zkmodules.terminal import TerminalMixin
-from pyzk.zkmodules.access import AccessMixin
-from pyzk.zkmodules.realtime import RealtimeMixin
-from pyzk.zkmodules.other import OtherMixin
+from pyzatt.zkmodules.packet import PacketMixin
+from pyzatt.zkmodules.data_user import DataUserMixin
+from pyzatt.zkmodules.data_record import DataRecordMixin
+from pyzatt.zkmodules.terminal import TerminalMixin
+from pyzatt.zkmodules.access import AccessMixin
+from pyzatt.zkmodules.realtime import RealtimeMixin
+from pyzatt.zkmodules.other import OtherMixin
 from prettytable import PrettyTable
-from pyzk.misc import *
+from pyzatt.misc import *
 import binascii
 
 """

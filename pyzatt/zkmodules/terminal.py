@@ -1,7 +1,7 @@
 import socket
 import struct
-from pyzk.zkmodules.defs import *
-from pyzk.misc import *
+from pyzatt.zkmodules.defs import *
+from pyzatt.misc import *
 
 """
 This file contains the functions of the "terminal" protocol spec
@@ -107,7 +107,11 @@ class TerminalMixin:
         # iterates through the given keys
         for k in stat_keys:
             # reads the field and stores the result in the given dict
-            stat_keys[k] = self.read_status(STATUS[k])
+            try:
+                stat_keys[k] = self.read_status(STATUS[k])
+            except struct.error:
+                print("Failed to read field: {0}".format(k))
+                stat_keys[k] = -1
 
         return stat_keys
 

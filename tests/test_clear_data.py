@@ -1,9 +1,10 @@
-#!/usr/bin/python3.5
+#!/usr/bin/env python
+
+import pytest
 import time
-import os.path
-from utils import *
-import pyzk.pyzk as pyzk
-from pyzk.zkmodules.defs import *
+from pyzatt.misc import *
+import pyzatt.pyzatt as pyzatt
+from pyzatt.zkmodules.defs import *
 
 """
 Test script to clear data on the machine
@@ -16,18 +17,23 @@ WARNING: Apply this test to devices that aren't under current use,
 Author: Alexander Marin <alexanderm2230@gmail.com>
 """
 
-time.sleep(0)
+@pytest.mark.skip()
+@pytest.mark.destructive
+def test_clear_data(parse_options):
+    assert parse_options, "Invalid run settings"
+    opts = parse_options
 
-ip_address = '192.168.19.152'  # set the ip address of the device to test
-machine_port = 4370
+    ip_address = opts['ip-address']  # set the ip address of the device to test
 
-z = pyzk.ZKSS()
-z.connect_net(ip_address, machine_port)
-z.disable_device()
+    machine_port = 4370
 
-print_header("Clear data")
+    z = pyzatt.ZKSS()
+    z.connect_net(ip_address, machine_port)
+    z.disable_device()
 
-z.clear_data(5)
+    print_header("Clear data")
 
-z.enable_device()
-z.disconnect()
+    z.clear_data(5)
+
+    z.enable_device()
+    z.disconnect()

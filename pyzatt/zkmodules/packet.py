@@ -1,5 +1,5 @@
-from pyzk.zkmodules.defs import *
-from pyzk.misc import *
+from pyzatt.zkmodules.defs import *
+from pyzatt.misc import *
 
 """
 This file contains provides functions to create, parse, receive and send,
@@ -97,19 +97,9 @@ class PacketMixin:
         elif self.last_reply_code == CMD_PREPARE_DATA:
             # seen on fp template download procedure
 
-            # receives first part of the packet with the long dataset
-            zkp = self.recv_packet(16)
-
-            # extracts size of the total packet
-            total_size = 8 + struct.unpack('<H', zkp[4:6])[0]
-            rem_recv = total_size - len(zkp)
-            # keeps reading until it receives the complete dataset packet
-            while len(zkp) < total_size:
-                zkp += self.recv_packet(rem_recv)
-                rem_recv = total_size - len(zkp)
-
+            # receives packet with long dataset
+            zkp = self.recv_packet()
             self.parse_ans(zkp)
-
             dataset = self.last_payload_data
 
             # receives the acknowledge after the dataset packet
@@ -129,17 +119,8 @@ class PacketMixin:
             # receives the prepare data reply
             self.recv_packet(24)
 
-            # receives the first part of the packet with the long dataset
-            zkp = self.recv_packet(16)
-
-            # extracts size of the total packet
-            total_size = 8 + struct.unpack('<H', zkp[4:6])[0]
-            rem_recv = total_size - len(zkp)
-
-            # keeps reading until it receives the complete dataset packet
-            while len(zkp) < total_size:
-                zkp += self.recv_packet(rem_recv)
-                rem_recv = total_size - len(zkp)
+            # receives packet with long dataset
+            zkp = self.recv_packet()
             self.parse_ans(zkp)
             dataset = self.last_payload_data
 
@@ -159,6 +140,23 @@ class PacketMixin:
         return dataset
 
     def recv_packet(self, buff_size=4096):
+        """
+        Receives a packet from the device.
+
+        :param buff_size: Int, buffer size used for socket receive.
+        :return: Bytearray, received data.
+        """
+        zkp = self.recv_data(buff_size)
+        # extracts size of the total packet
+        total_size = 8 + struct.unpack('<H', zkp[4:6])[0]
+        rem_recv = total_size - len(zkp)
+        # keeps reading until it receives the complete packet
+        while len(zkp) < total_size:
+            zkp += self.recv_data(rem_recv)
+            rem_recv = total_size - len(zkp)
+        return zkp
+
+    def recv_data(self, buff_size=4096):
         """
         Receives data from the device.
 
