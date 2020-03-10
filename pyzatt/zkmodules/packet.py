@@ -120,12 +120,14 @@ class PacketMixin:
             self.recv_packet(24)
 
             # receives packet with long dataset
-            zkp = self.recv_packet()
-            self.parse_ans(zkp)
-            dataset = self.last_payload_data
-
-            # receives the acknowledge after the dataset packet
-            self.recv_packet(buff_size)
+            dataset = bytearray()
+            while True:
+                zkp = self.recv_packet()
+                self.parse_ans(zkp)
+                if (self.last_reply_code == CMD_DATA):
+                    dataset += self.last_payload_data
+                else:
+                    break
 
             # increment reply number and send "free data" command
             self.reply_number += 1

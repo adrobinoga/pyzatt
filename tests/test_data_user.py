@@ -110,7 +110,7 @@ def test_data_user(parse_options):
         print("Run the script test_data_other.py before this script!")
         z.enable_device()
         z.disconnect()
-        exit(0)
+    return
 
     ans = input("Delete user %s, y/n: " % user1_id)
     if ans == 'y':
