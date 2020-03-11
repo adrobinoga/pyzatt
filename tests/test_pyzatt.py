@@ -6,7 +6,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from pyzatt import pyzatt
+# from pyzatt import pyzatt
 from pyzatt import cli
 
 
