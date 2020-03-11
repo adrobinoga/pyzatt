@@ -1,11 +1,11 @@
-from pyzatt.zkmodules.defs import *
-from pyzatt.misc import *
+import struct
+import pyzatt.zkmodules.defs as DEFS
 
 """
 This file contains the functions to manage the user's data, fingerprints,
 user IDs, passwords, etc.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
 
 
@@ -17,7 +17,7 @@ class DataUserMixin:
 
         :return: None. Stores the users info in the ZKUsers dict.
         """
-        self.send_command(cmd=CMD_DATA_WRRQ,
+        self.send_command(cmd=DEFS.CMD_DATA_WRRQ,
                           data=bytearray.fromhex('0109000500000000000000'))
 
         # receive dataset with users info
@@ -96,7 +96,7 @@ class DataUserMixin:
         :param user_id: Str, user's ID.
         :return: Integer, verification style.
         """
-        self.send_command(cmd=CMD_VERIFY_RRQ,
+        self.send_command(cmd=DEFS.CMD_VERIFY_RRQ,
                           data=struct.pack('<H', self.id_to_sn(user_id)))
         self.recv_reply()
 
@@ -114,7 +114,7 @@ class DataUserMixin:
         ver_data = bytearray([0x00]*24)
         ver_data[0:2] = struct.pack('<H', self.id_to_sn(user_id))
         ver_data[2] = verify_style
-        self.send_command(cmd=CMD_VERIFY_WRQ, data=ver_data)
+        self.send_command(cmd=DEFS.CMD_VERIFY_WRQ, data=ver_data)
         self.recv_reply()
         return self.recvd_ack()
 
@@ -127,7 +127,7 @@ class DataUserMixin:
         """
         user_sn = self.users[self.id_to_sn(user_id)].user_sn
         del_data = bytearray(struct.pack('<H', user_sn))
-        self.send_command(CMD_DELETE_USER, del_data)
+        self.send_command(DEFS.CMD_DELETE_USER, del_data)
         self.recv_reply()
         self.refresh_data()
 
@@ -181,10 +181,10 @@ class DataUserMixin:
         """
         user_sn = self.id_to_sn(user_id)
 
-        if user_info == None:
+        if user_info is None:
             user_info = self.users[user_sn].ser_user()
 
-        self.send_command(cmd=CMD_USER_WRQ, data=user_info)
+        self.send_command(cmd=DEFS.CMD_USER_WRQ, data=user_info)
         self.recv_reply()
         self.refresh_data()
 
@@ -226,7 +226,7 @@ class DataUserMixin:
         :return: None. Stores the templates and templates info in the
         corresponding ZKUsers entries.
         """
-        self.send_command(cmd=CMD_DATA_WRRQ,
+        self.send_command(cmd=DEFS.CMD_DATA_WRRQ,
                           data=bytearray.fromhex('0107000200000000000000'))
 
         # receive the fp template dataset
@@ -273,7 +273,7 @@ class DataUserMixin:
         del_data[24] = fp_index
 
         # send the request
-        self.send_command(cmd=CMD_DEL_FPTMP, data=del_data)
+        self.send_command(cmd=DEFS.CMD_DEL_FPTMP, data=del_data)
         self.recv_reply()
 
         # refresh the device data
@@ -292,7 +292,7 @@ class DataUserMixin:
         req_fp.append(fp_index)
 
         # send request
-        self.send_command(cmd=CMD_USERTEMP_RRQ, data=req_fp)
+        self.send_command(cmd=DEFS.CMD_USERTEMP_RRQ, data=req_fp)
         return self.recv_long_reply()
 
     def upload_fp(self, user_id, fp, fp_index, fp_flag):
@@ -312,15 +312,15 @@ class DataUserMixin:
         fp_size = struct.pack('<H', len(fp))
         prep_data = bytearray([0x00]*4)
         prep_data[0:2] = fp_size
-        self.send_command(cmd=CMD_PREPARE_DATA, data=prep_data)
+        self.send_command(cmd=DEFS.CMD_PREPARE_DATA, data=prep_data)
         self.recv_reply()
 
         # sending template
-        self.send_command(cmd=CMD_DATA, data=fp)
+        self.send_command(cmd=DEFS.CMD_DATA, data=fp)
         self.recv_reply()
 
         # request checksum
-        self.send_command(cmd=CMD_CHECKSUM_BUFFER)
+        self.send_command(cmd=DEFS.CMD_CHECKSUM_BUFFER)
         self.recv_reply()  # ignored
 
         # send write request
@@ -329,11 +329,11 @@ class DataUserMixin:
         tmp_wreq_data[2] = fp_index
         tmp_wreq_data[3] = fp_flag
         tmp_wreq_data[4:6] = fp_size
-        self.send_command(cmd=CMD_TMP_WRITE, data=tmp_wreq_data)
+        self.send_command(cmd=DEFS.CMD_TMP_WRITE, data=tmp_wreq_data)
         self.recv_reply()
 
         # free data buffer
-        self.send_command(cmd=CMD_FREE_DATA)
+        self.send_command(cmd=DEFS.CMD_FREE_DATA)
         self.recv_reply()
 
         # refresh data
@@ -345,5 +345,5 @@ class DataUserMixin:
 
         :return: None.
         """
-        self.send_command(cmd=CMD_REFRESHDATA)
+        self.send_command(cmd=DEFS.CMD_REFRESHDATA)
         self.recv_reply()

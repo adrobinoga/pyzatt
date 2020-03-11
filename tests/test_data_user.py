@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-import pytest
-import time
 import os.path
-from pyzatt.misc import *
+import pyzatt.misc as misc
 import pyzatt.pyzatt as pyzatt
-from pyzatt.zkmodules.defs import *
+import pyzatt.zkmodules.defs as DEFS
 
 """
 Test script to test/show several functions of the data-user spec/lib.
@@ -18,8 +16,9 @@ WARNING: Apply this test to devices that aren't under current use,
     the device(Sync) using the ZKAccess software, that will
     overwrite any changes made by the script.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
+
 
 def test_data_user(parse_options):
     assert parse_options, "Invalid run settings"
@@ -28,13 +27,13 @@ def test_data_user(parse_options):
     ip_address = opts['ip-address']  # set the ip address of the device to test
     machine_port = 4370
 
-    print_header("TEST OF DATA-USER FUNCTIONS")
+    misc.print_header("TEST OF DATA-USER FUNCTIONS")
 
     z = pyzatt.ZKSS()
     z.connect_net(ip_address, machine_port)
     z.disable_device()
 
-    print_header("1.Read all user info")
+    misc.print_header("1.Read all user info")
 
     # delete user if it exists
     user1_id = "5555"
@@ -45,7 +44,7 @@ def test_data_user(parse_options):
     z.read_all_fptmp()
     z.print_users_summary()
 
-    print_header("2.Changing verification mode")
+    misc.print_header("2.Changing verification mode")
 
     # set user params
     z.set_user_info(user_id=user1_id, name="Dummy 1",
@@ -53,23 +52,21 @@ def test_data_user(parse_options):
                     admin_lv=0, neg_enabled=0,
                     user_group=1, user_tzs=[1, 0, 0])
     z.read_all_user_id()
-    z.set_verify_style(user1_id, GROUP_VERIFY)
+    z.set_verify_style(user1_id, DEFS.GROUP_VERIFY)
 
     print("User: %s" % user1_id)
     print("Verify style: %i" % z.get_verify_style(user1_id))
-    z.set_verify_style(user1_id, FPorRF)
+    z.set_verify_style(user1_id, DEFS.FPorRF)
     print("New verify style: %i" % z.get_verify_style(user1_id))
 
-    print_header("3. Clear and set password")
+    misc.print_header("3. Clear and set password")
 
     print("Users password: %s" % z.get_password(user1_id))
     z.clear_password(user1_id)
     z.set_password(user1_id, "99")
     print("New password is: %s" % z.get_password(user1_id))
 
-    print_header("4. Uploading/deleteting templates")
-
-
+    misc.print_header("4. Uploading/deleteting templates")
 
     fp1_tmp = bytearray()
     fp1_fn = 'fp1.bin'  # filename template 1
@@ -92,7 +89,7 @@ def test_data_user(parse_options):
         with open(fp2_fn, 'rb') as infile:
             fp2_tmp = infile.read()
 
-        print_info("Uploading templates")
+        misc.print_info("Uploading templates")
         print("Upload template 1, user= %s, finger=%i, flag=%i" %
               (user1_id, fp1_idx, fp1_flg))
         z.upload_fp(user1_id, fp1_tmp, fp1_idx, fp1_flg)
@@ -101,7 +98,7 @@ def test_data_user(parse_options):
               (user1_id, fp2_idx, fp2_flg))
         z.upload_fp(user1_id, fp2_tmp, fp2_idx, fp2_flg)
 
-        print_info("Now the templates should be available")
+        misc.print_info("Now the templates should be available")
         z.read_all_user_id()
         z.read_all_fptmp()
         z.print_users_summary()
@@ -110,15 +107,15 @@ def test_data_user(parse_options):
         print("Run the script test_data_other.py before this script!")
         z.enable_device()
         z.disconnect()
-        exit(0)
+    return
 
     ans = input("Delete user %s, y/n: " % user1_id)
     if ans == 'y':
         z.delete_user(user1_id)
     else:
-        print_info("Now you may go and test both finger templates")
+        misc.print_info("Now you may go and test both finger templates")
 
-    print_header("")
+    misc.print_header("")
     z.read_all_user_id()
     z.read_all_fptmp()
     z.print_users_summary()

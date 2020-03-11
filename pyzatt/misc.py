@@ -7,7 +7,7 @@ from colorama import Fore, Style
 This file contains several functions needed to encode and decode values, some
 functions useful for debugging are also included.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
 
 
@@ -21,7 +21,7 @@ def print_info(s):
     :param s: String, text to be printed.
     :return: None.
     """
-    print(Style.BRIGHT + Fore.GREEN + s +Style.RESET_ALL)
+    print(Style.BRIGHT + Fore.GREEN + s + Style.RESET_ALL)
 
 
 def print_header(s):

@@ -4,8 +4,8 @@ import pytest
 import time
 import os.path
 import pyzatt.pyzatt as pyzatt
-from pyzatt.zkmodules.defs import *
-from pyzatt.misc import *
+import pyzatt.zkmodules.defs as DEFS
+import pyzatt.misc as misc
 
 """
 Test script to test/show several functions of the access spec/lib.
@@ -18,8 +18,9 @@ WARNING: Apply this test to devices that aren't under current use,
     the device(Sync) using the ZKAccess software, that will
     overwrite any changes made by the script.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
+
 
 @pytest.mark.skip()
 def test_access(parse_options):
@@ -29,13 +30,13 @@ def test_access(parse_options):
     ip_address = opts['ip-address']  # set the ip address of the device to test
     machine_port = 4370
 
-    print_header("TEST OF ACCESS FUNCTIONS")
+    misc.print_header("TEST OF ACCESS FUNCTIONS")
 
     z = pyzatt.ZKSS()
     z.connect_net(ip_address, machine_port)
     z.disable_device()
 
-    print_header("1.Read all user info")
+    misc.print_header("1.Read all user info")
 
     # delete test uses if they exists
     user1_id = "5555"
@@ -48,7 +49,7 @@ def test_access(parse_options):
     z.read_all_fptmp()
     z.print_users_summary()
 
-    print_header("2.Create users and upload fingerprints")
+    misc.print_header("2.Create users and upload fingerprints")
 
     z.set_user_info(user_id=user1_id, name="Dummy 1",
                     password="22224444", card_no=333,
@@ -61,8 +62,8 @@ def test_access(parse_options):
                     user_group=1, user_tzs=[1, 0, 0])
 
     z.read_all_user_id()
-    z.set_verify_style(user1_id, GROUP_VERIFY)
-    z.set_verify_style(user2_id, GROUP_VERIFY)
+    z.set_verify_style(user1_id, DEFS.GROUP_VERIFY)
+    z.set_verify_style(user2_id, DEFS.GROUP_VERIFY)
 
     fp1_tmp = bytearray()
     fp1_fn = 'fp1.bin'  # filename template 1
@@ -81,7 +82,7 @@ def test_access(parse_options):
         with open(fp2_fn, 'rb') as infile:
             fp2_tmp = infile.read()
 
-        print_info("Uploading templates")
+        misc.print_info("Uploading templates")
         print("Upload template 1, user= %s, finger=%i, flag=%i" %
               (user1_id, fp1_idx, fp1_flg))
         z.upload_fp(user1_id, fp1_tmp, fp1_idx, fp1_flg)
@@ -90,7 +91,7 @@ def test_access(parse_options):
               (user1_id, fp2_idx, fp2_flg))
         z.upload_fp(user2_id, fp2_tmp, fp2_idx, fp2_flg)
 
-        print_info("Now the templates should be available")
+        misc.print_info("Now the templates should be available")
         z.read_all_user_id()
         z.read_all_fptmp()
         z.print_users_summary()
@@ -99,10 +100,8 @@ def test_access(parse_options):
         print("Run the script test_data_other.py before this script!")
         z.enable_device()
         z.disconnect()
-        exit(0)
 
-
-    print_header("3. Set/get timezones")
+    misc.print_header("3. Set/get timezones")
 
     print("Timezone 1:", z.get_tz_info(1))
     z.set_tz_info(49, z.get_tz_info(1))
@@ -117,7 +116,7 @@ def test_access(parse_options):
 
     print("New timezone 49:", z.get_tz_info(49))
 
-    print_header("4. Creating groups")
+    misc.print_header("4. Creating groups")
 
     z.set_group_info([35, [1, 49], 0, 1])
     z.set_group_info([36, [1, 49], 0, 1])
@@ -138,10 +137,10 @@ def test_access(parse_options):
     z.read_all_fptmp()
     z.print_users_summary()
 
-    print_header("5. Users timezones")
+    misc.print_header("5. Users timezones")
 
     for n in range(3):
-        tz_no = 40+n
+        tz_no = 40 + n
         print("Creating timezone: ", tz_no)
         z.set_tz_info(tz_no, z.get_tz_info(1))
 
@@ -156,36 +155,37 @@ def test_access(parse_options):
     z.read_all_user_id()
     z.print_users_summary()
 
-    print_header("6. Unlock combinations")
+    misc.print_header("6. Unlock combinations")
 
-    print_info("Creating unlock combination")
+    misc.print_info("Creating unlock combination")
 
     z.set_unlock_comb(9, [35, 36])
     print("Created unlock combination %i, with groups: %s" %
           (9, z.get_unlock_comb(9)))
 
-    print_header("7. Unlock door")
+    misc.print_header("7. Unlock door")
 
     print("Door unlock: 20 seconds")
     time.sleep(10)
     z.door_unlock(20)
 
-    print_header("")
+    misc.print_header("")
 
-    print_info("Now to test this configuration, press [n], go to the"
-               "device and you should need both fingers (corresponding to the"
-               " templates) to get access, because both belong to "
-               "different users and from different groups, and they are "
-               "in an unlock combination.")
+    misc.print_info("Now to test this configuration, press [n], go to the"
+                    "device and you should need both fingers (corresponding "
+                    "to the templates) to get access, because both belong to "
+                    "different users and from different groups, and they are "
+                    "in an unlock combination.")
 
     ans = input("Delete users %s, y/n: " % user1_id)
     if ans == 'y':
         z.delete_user(user1_id)
         z.delete_user(user2_id)
     else:
-        print_info("Now you may go and test access with both finger templates")
+        misc.print_info("Now you may go and test access with "
+                        "both finger templates")
 
-    print_header("")
+    misc.print_header("")
     z.read_all_user_id()
     z.read_all_fptmp()
     z.print_users_summary()

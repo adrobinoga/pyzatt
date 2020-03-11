@@ -4,11 +4,11 @@ import pytest
 def pytest_addoption(parser):
     parser.addoption(
         "--platform", action="store", default="simulator",
-            help="simulator|hardware: chose to simulate or use real hardware"
+        help="simulator|hardware: chose to simulate or use real hardware"
     )
     parser.addoption(
         "--ip-address", action="store",
-            help="ip address of the device, required if platform=hardware"
+        help="ip address of the device, required if platform=hardware"
     )
     parser.addoption(
         "--seed", type=int,
