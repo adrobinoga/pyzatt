@@ -1,11 +1,11 @@
 import struct
-from pyzatt.zkmodules.defs import *
+import pyzatt.zkmodules.defs as DEFS
 
 """
 This file contains the functions to extract info of realtime events
 incoming from attendance devices.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
 
 
@@ -17,7 +17,7 @@ class RealtimeMixin:
 
         :return: None.
         """
-        self.send_command(cmd=CMD_REG_EVENT,
+        self.send_command(cmd=DEFS.CMD_REG_EVENT,
                           data=bytearray([0xff, 0xff, 0x00, 0x00]))
         self.recv_reply()
 
@@ -37,7 +37,7 @@ class RealtimeMixin:
         returns -1.
         """
         alarm_type = -1
-        if self.last_event_code == EF_ALARM:
+        if self.last_event_code == DEFS.EF_ALARM:
             alarm_type = struct.unpack('<I', self.last_payload_data[0:4])[0]
         return alarm_type
 
@@ -59,7 +59,7 @@ class RealtimeMixin:
         alarm_type = -1
         sn = -1
         match_type = -1
-        if self.last_event_code == EF_ALARM:
+        if self.last_event_code == DEFS.EF_ALARM:
             alarm_type = struct.unpack('<H', self.last_payload_data[4:6])[0]
             sn = struct.unpack('<H', self.last_payload_data[6:8])[0]
             match_type = struct.unpack('<I', self.last_payload_data[8:12])[0]
@@ -81,9 +81,9 @@ class RealtimeMixin:
         uid = ''
         ver_type = -1
         date_str = ''
-        if self.last_event_code == EF_ATTLOG:
+        if self.last_event_code == DEFS.EF_ATTLOG:
             uid = self.last_payload_data[0:9].decode('ascii').\
-                replace('\x00','')
+                replace('\x00', '')
             ver_type = struct.unpack('<H', self.last_payload_data[24:26])[0]
             date_str = "20%i/%i/%i %i:%i:%i" %\
                        tuple(self.last_payload_data[26:32])
@@ -109,7 +109,7 @@ class RealtimeMixin:
         fp_size = -1
         enroll_flg = False
 
-        if self.last_event_code == EF_ENROLLFINGER:
+        if self.last_event_code == DEFS.EF_ENROLLFINGER:
             enroll_flg = True if \
                 struct.unpack('<H', self.last_payload_data[0:2])[0] == 0\
                 else False
@@ -132,7 +132,7 @@ class RealtimeMixin:
         returns -1 if it fails to extract the score.
         """
         score = -1
-        if self.last_event_code == EF_FPFTR:
+        if self.last_event_code == DEFS.EF_FPFTR:
             score = self.last_payload_data[0]
         return score
 
@@ -145,7 +145,7 @@ class RealtimeMixin:
         """
         while True:
             self.recv_event()
-            if self.last_event_code == EF_FPFTR:
+            if self.last_event_code == DEFS.EF_FPFTR:
                 return self.parse_score_fp_event()
 
     def parse_verify_event(self):
@@ -156,10 +156,10 @@ class RealtimeMixin:
         the packet doesn't correspond to a EF_VERIFY event.
         """
         user_sn = -1
-        if self.last_event_code == EF_VERIFY:
+        if self.last_event_code == DEFS.EF_VERIFY:
             user_sn = struct.unpack('<I', self.last_payload_data[0:4])[0]
 
-            if self.last_payload_data[4]!=1:
+            if self.last_payload_data[4] != 1:
                 print('Found value different of 1 on verify packet: %' %
                       (self.last_payload_data[4]))
 

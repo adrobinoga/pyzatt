@@ -113,9 +113,9 @@ def test_data_user(parse_options):
     if ans == 'y':
         z.delete_user(user1_id)
     else:
-        print_info("Now you may go and test both finger templates")
+        misc.print_info("Now you may go and test both finger templates")
 
-    print_header("")
+    misc.print_header("")
     z.read_all_user_id()
     z.read_all_fptmp()
     z.print_users_summary()

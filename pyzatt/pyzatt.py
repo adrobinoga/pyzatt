@@ -6,15 +6,16 @@ from pyzatt.zkmodules.access import AccessMixin
 from pyzatt.zkmodules.realtime import RealtimeMixin
 from pyzatt.zkmodules.other import OtherMixin
 from prettytable import PrettyTable
-from pyzatt.misc import *
 import binascii
+import struct
 
 """
 Main library file, defines class ZK session to access a device,
 and ZKUser class, used to store user's data.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
+
 
 class ZKUser:
     """
@@ -182,7 +183,7 @@ class ZKSS(PacketMixin, DataUserMixin,
     def create_user(self):
         try:
             new_user_sn = max(list(self.users.keys()))+1
-        except:
+        except ValueError:
             new_user_sn = 1
         self.add_user(new_user_sn)
         return new_user_sn
@@ -196,7 +197,7 @@ class ZKSS(PacketMixin, DataUserMixin,
 
         :return: None.
         """
-        if users_sns == None:
+        if users_sns is None:
             users_sns = self.users.keys()
 
         # create users info table

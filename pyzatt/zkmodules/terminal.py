@@ -1,13 +1,13 @@
 import socket
 import struct
-from pyzatt.zkmodules.defs import *
-from pyzatt.misc import *
+import pyzatt.zkmodules.defs as DEFS
+import pyzatt.misc as misc
 
 """
 This file contains the functions of the "terminal" protocol spec
 in attendance devices.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
 
 
@@ -30,7 +30,7 @@ class TerminalMixin:
         self.soc_zk.connect((ip_addr, dev_port))
 
         # send connect command
-        self.send_command(CMD_CONNECT)
+        self.send_command(DEFS.CMD_CONNECT)
 
         # receive reply
         self.recv_reply()
@@ -53,7 +53,7 @@ class TerminalMixin:
         processed successfully, also clears the flag self.connected_flg.
         """
         # terminate connection command
-        self.send_command(CMD_EXIT)
+        self.send_command(DEFS.CMD_EXIT)
         self.recv_reply()
 
         # close connection and update flag
@@ -68,11 +68,11 @@ class TerminalMixin:
 
         :return: Datetime object, datetime of the device.
         """
-        self.send_command(CMD_GET_TIME)
+        self.send_command(DEFS.CMD_GET_TIME)
         self.recv_reply()
-        return decode_time(self.last_payload_data)
+        return misc.decode_time(self.last_payload_data)
 
-    def set_device_time(self, t=datetime.datetime.now()):
+    def set_device_time(self, t=misc.datetime.datetime.now()):
         """
         Sets the time of the device.
 
@@ -81,7 +81,7 @@ class TerminalMixin:
         :return: Bool, returns True if set time command was
         processed successfully.
         """
-        self.send_command(CMD_SET_TIME, data=encode_time(t))
+        self.send_command(DEFS.CMD_SET_TIME, data=misc.encode_time(t))
         self.recv_reply()
         return self.recvd_ack()
 
@@ -98,7 +98,7 @@ class TerminalMixin:
         :return: Dictionary, the output is given on the same input dict.
         """
         # request status structure
-        self.send_command(CMD_GET_FREE_SIZES)
+        self.send_command(DEFS.CMD_GET_FREE_SIZES)
 
         self.recv_reply()
         self.dev_status = self.last_payload_data
@@ -108,7 +108,7 @@ class TerminalMixin:
         for k in stat_keys:
             # reads the field and stores the result in the given dict
             try:
-                stat_keys[k] = self.read_status(STATUS[k])
+                stat_keys[k] = self.read_status(DEFS.STATUS[k])
             except struct.error:
                 print("Failed to read field: {0}".format(k))
                 stat_keys[k] = -1
@@ -132,7 +132,7 @@ class TerminalMixin:
 
         :return: Integer, attendance counter.
         """
-        return self.read_status(STATUS['attlog_count'])
+        return self.read_status(DEFS.STATUS['attlog_count'])
 
     def read_user_count(self):
         """
@@ -140,7 +140,7 @@ class TerminalMixin:
 
         :return: Integer, user count.
         """
-        return self.read_status(STATUS['user_count'])
+        return self.read_status(DEFS.STATUS['user_count'])
 
     def get_device_info(self, param_name):
         """
@@ -152,7 +152,7 @@ class TerminalMixin:
         as "0" or "1", integers are given as strings.
         """
         # request a parameter
-        self.send_command(CMD_OPTIONS_RRQ,
+        self.send_command(DEFS.CMD_OPTIONS_RRQ,
                           bytearray("{0}\x00".format(param_name), 'ascii'))
         self.recv_reply()
         # extract and returns the reply value
@@ -169,11 +169,11 @@ class TerminalMixin:
         :return: Bool, returns True if the commands were
         processed successfully.
         """
-        self.send_command(CMD_OPTIONS_WRQ, bytearray(
+        self.send_command(DEFS.CMD_OPTIONS_WRQ, bytearray(
             "{0}={1}\x00".format(param_name, new_value), 'ascii'))
         self.recv_reply()
         ack1 = self.recvd_ack()
-        self.send_command(CMD_REFRESHOPTION)
+        self.send_command(DEFS.CMD_REFRESHOPTION)
         self.recv_reply()
         ack2 = self.recvd_ack()
         return ack1 and ack2
@@ -233,7 +233,7 @@ class TerminalMixin:
 
         :return: Integer, allowed size for users ID.
         """
-        return int(self.get_device_info('~PIN2Width').replace('\x00',''))
+        return int(self.get_device_info('~PIN2Width').replace('\x00', ''))
 
     def get_firmware_version(self):
         """
@@ -241,7 +241,7 @@ class TerminalMixin:
 
         :return: String.
         """
-        self.send_command(CMD_GET_VERSION)
+        self.send_command(DEFS.CMD_GET_VERSION)
         self.recv_reply()
         return self.last_payload_data.decode('ascii')
 
@@ -252,6 +252,6 @@ class TerminalMixin:
 
         :return: Integer, ranges from 0 to 5.
         """
-        self.send_command(CMD_STATE_RRQ)
+        self.send_command(DEFS.CMD_STATE_RRQ)
         self.recv_reply()
         return self.last_session_code

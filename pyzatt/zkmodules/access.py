@@ -1,12 +1,11 @@
 import struct
-from pyzatt.zkmodules.defs import *
-from pyzatt.misc import *
+import pyzatt.zkmodules.defs as DEFS
 
 """
 This file contains the functions related to manage access settings
 in attendance devices.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
 
 
@@ -19,7 +18,7 @@ class AccessMixin:
         :return: Integer, group number to which the user belongs.
         """
         user_sn = self.id_to_sn(user_id)
-        self.send_command(cmd=CMD_USERGRP_RRQ,
+        self.send_command(cmd=DEFS.CMD_USERGRP_RRQ,
                           data=struct.pack('<I', user_sn))
         self.recv_reply()
         return self.last_payload_data[0]
@@ -34,7 +33,7 @@ class AccessMixin:
         """
         user_sn = self.id_to_sn(user_id)
         grp_chg = bytearray(struct.pack('<I', user_sn)+bytes([group_no]))
-        self.send_command(cmd=CMD_USERGRP_WRQ, data=grp_chg)
+        self.send_command(cmd=DEFS.CMD_USERGRP_WRQ, data=grp_chg)
         self.recv_reply()
         self.refresh_data()
 
@@ -53,7 +52,7 @@ class AccessMixin:
 
         Where hours and minutes are given directly as integers.
         """
-        self.send_command(cmd=CMD_TZ_RRQ, data=struct.pack('<I', tz_no))
+        self.send_command(cmd=DEFS.CMD_TZ_RRQ, data=struct.pack('<I', tz_no))
         self.recv_reply()
 
         # if the tz doesn't exists return None
@@ -83,7 +82,7 @@ class AccessMixin:
             tz_seg = tz_info[day]
             tz_arr += tz_seg
         new_tz_info.extend(tz_arr)
-        self.send_command(cmd=CMD_TZ_WRQ, data=new_tz_info)
+        self.send_command(cmd=DEFS.CMD_TZ_WRQ, data=new_tz_info)
         self.recv_reply()
         self.refresh_data()
 
@@ -100,7 +99,7 @@ class AccessMixin:
         rreq_ulg = bytearray()
         rreq_ulg.append(comb_no)
         rreq_ulg.extend([0x00]*8)
-        self.send_command(cmd=CMD_ULG_RRQ, data=rreq_ulg)
+        self.send_command(cmd=DEFS.CMD_ULG_RRQ, data=rreq_ulg)
         self.recv_reply()
         ulg_comb = []
         for n in range(struct.unpack('<H', self.last_payload_data[6:8])[0]):
@@ -122,7 +121,7 @@ class AccessMixin:
         for n in range(len(ulg_comb)):
             wreq_ulg[1+n] = ulg_comb[n]
 
-        self.send_command(cmd=CMD_ULG_WRQ, data=wreq_ulg)
+        self.send_command(cmd=DEFS.CMD_ULG_WRQ, data=wreq_ulg)
         self.recv_reply()
         self.refresh_data()
 
@@ -143,7 +142,7 @@ class AccessMixin:
         grp_req = bytearray([0x00]*8)
         grp_req[0] = group_no
 
-        self.send_command(cmd=CMD_GRPTZ_RRQ, data=grp_req)
+        self.send_command(cmd=DEFS.CMD_GRPTZ_RRQ, data=grp_req)
         self.recv_reply()
 
         group_tzs = []
@@ -174,7 +173,7 @@ class AccessMixin:
 
         wreq_grp_info[7] = group_info[2] | group_info[3]
 
-        self.send_command(cmd=CMD_GRPTZ_WRQ, data=wreq_grp_info)
+        self.send_command(cmd=DEFS.CMD_GRPTZ_WRQ, data=wreq_grp_info)
         self.recv_reply()
         self.refresh_data()
 
@@ -188,7 +187,8 @@ class AccessMixin:
         integer, if the user is using group's timezones, the list is empty.
         """
         user_sn = self.id_to_sn(user_id)
-        self.send_command(cmd=CMD_USERTZ_RRQ, data=struct.pack('<I', user_sn))
+        self.send_command(cmd=DEFS.CMD_USERTZ_RRQ,
+                          data=struct.pack('<I', user_sn))
         self.recv_reply()
 
         user_tzs = []
@@ -196,7 +196,8 @@ class AccessMixin:
             return user_tzs
 
         for n in range(3):
-            tz = struct.unpack('<H', self.last_payload_data[2+n*2:2+((n+1)*2)])[0]
+            tz = struct.unpack('<H',
+                               self.last_payload_data[2+n*2:2+((n+1)*2)])[0]
             if tz:
                 user_tzs += [tz]
         return user_tzs
@@ -219,7 +220,7 @@ class AccessMixin:
         for n in range(len(tzs)):
             new_tz[8+(4*n):16+(4*n)] = struct.pack('<I', tzs[n])
 
-        self.send_command(cmd=CMD_USERTZ_WRQ, data=new_tz)
+        self.send_command(cmd=DEFS.CMD_USERTZ_WRQ, data=new_tz)
         self.recv_reply()
         self.refresh_data()
 
@@ -239,7 +240,7 @@ class AccessMixin:
         :param delay: Integer, number of seconds to unlock the door.
         :return: None.
         """
-        self.send_command(cmd=CMD_UNLOCK, data=struct.pack('<I', delay))
+        self.send_command(cmd=DEFS.CMD_UNLOCK, data=struct.pack('<I', delay))
         self.recv_reply()
 
     def get_door_state(self):
@@ -248,6 +249,6 @@ class AccessMixin:
 
         :return: Integer, door state.
         """
-        self.send_command(id=CMD_DOORSTATE_RRQ)
+        self.send_command(id=DEFS.CMD_DOORSTATE_RRQ)
         self.recv_reply()
         return self.last_payload_data[0]

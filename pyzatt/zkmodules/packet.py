@@ -1,11 +1,12 @@
-from pyzatt.zkmodules.defs import *
-from pyzatt.misc import *
+import struct
+import pyzatt.zkmodules.defs as DEFS
+import pyzatt.misc as misc
 
 """
 This file contains provides functions to create, parse, receive and send,
 packets, it also suppors reading of large datasets(see ex_data protocol spec).
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
 
 
@@ -25,7 +26,7 @@ class PacketMixin:
         the reply number is obtained from context.
         :return:
         """
-        zk_packet = bytearray(START_TAG)  # fixed tag
+        zk_packet = bytearray(DEFS.START_TAG)  # fixed tag
         zk_packet.extend([0x00] * 2)  # size of payload
         zk_packet.extend([0x00] * 2)  # fixed zeros
         zk_packet.extend(struct.pack('<H', cmd_code))  # cmd code / reply id
@@ -50,7 +51,7 @@ class PacketMixin:
         # write size field
         zk_packet[4:6] = struct.pack('<H', len(zk_packet) - 8)
         # write checksum
-        zk_packet[10:12] = struct.pack('<H', checksum16(zk_packet[8:]))
+        zk_packet[10:12] = struct.pack('<H', misc.checksum16(zk_packet[8:]))
 
         return zk_packet
 
@@ -90,11 +91,11 @@ class PacketMixin:
 
         dataset = bytearray([])
 
-        if self.last_reply_code == CMD_DATA:
+        if self.last_reply_code == DEFS.CMD_DATA:
             # device sent the dataset immediately, i.e. short dataset
             dataset = self.last_payload_data
 
-        elif self.last_reply_code == CMD_PREPARE_DATA:
+        elif self.last_reply_code == DEFS.CMD_PREPARE_DATA:
             # seen on fp template download procedure
 
             # receives packet with long dataset
@@ -105,7 +106,7 @@ class PacketMixin:
             # receives the acknowledge after the dataset packet
             self.recv_packet(buff_size)
 
-        elif self.last_reply_code == CMD_ACK_OK:
+        elif self.last_reply_code == DEFS.CMD_ACK_OK:
             # device sent the dataset with additional commands, i.e. longer
             # dataset, see ex_data spec
             size_info = struct.unpack('<I', self.last_payload_data[1:5])[0]
@@ -114,7 +115,7 @@ class PacketMixin:
             rdy_struct = bytearray(4 * [0])
             rdy_struct.extend(struct.pack('<I', size_info))
 
-            self.send_command(CMD_DATA_RDY, data=bytearray(rdy_struct))
+            self.send_command(DEFS.CMD_DATA_RDY, data=bytearray(rdy_struct))
 
             # receives the prepare data reply
             self.recv_packet(24)
@@ -124,14 +125,14 @@ class PacketMixin:
             while True:
                 zkp = self.recv_packet()
                 self.parse_ans(zkp)
-                if (self.last_reply_code == CMD_DATA):
+                if (self.last_reply_code == DEFS.CMD_DATA):
                     dataset += self.last_payload_data
                 else:
                     break
 
             # increment reply number and send "free data" command
             self.reply_number += 1
-            self.send_command(CMD_FREE_DATA)
+            self.send_command(DEFS.CMD_FREE_DATA)
 
             # receive acknowledge
             self.recv_packet(buff_size)
@@ -178,7 +179,7 @@ class PacketMixin:
         """
         self.parse_ans(self.recv_packet())
         self.last_event_code = self.last_session_code
-        self.send_packet(self.create_packet(CMD_ACK_OK, reply_number=0))
+        self.send_packet(self.create_packet(DEFS.CMD_ACK_OK, reply_number=0))
 
     def get_last_packet(self):
         """
@@ -228,7 +229,7 @@ class PacketMixin:
         self.last_payload_data = bytearray([])
 
         # check the start tag
-        if not zkp[0:4] == START_TAG:
+        if not zkp[0:4] == DEFS.START_TAG:
             print("Bad start tag")
             return False
 
@@ -236,7 +237,7 @@ class PacketMixin:
         self.last_reply_size = struct.unpack('<I', zkp[4:8])[0]
 
         # checks the checksum field
-        if not is_valid_payload(zkp[8:]):
+        if not misc.is_valid_payload(zkp[8:]):
             print("Invalid checksum")
             return False
 
@@ -259,7 +260,7 @@ class PacketMixin:
         :return: Bool, True if the last reply was an CMD_ACK_OK reply,
         returns False if otherwise.
         """
-        if self.last_reply_code == CMD_ACK_OK:
+        if self.last_reply_code == DEFS.CMD_ACK_OK:
             return True
         else:
             return False

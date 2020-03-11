@@ -3,11 +3,11 @@
 This file contains definition of constants and codes used for the protocol
 implementation.
 
-Author: Alexander Marin <alexanderm2230@gmail.com>
+Author: Alexander Marin <alexuzmarin@gmail.com>
 """
 
 # fixed arrays
-START_TAG = bytearray([0x50,0x50,0x82,0x7D])
+START_TAG = bytearray([0x50, 0x50, 0x82, 0x7D])
 SHORT_ZERO = bytearray([0x00]*2)
 
 # command codes
@@ -127,12 +127,14 @@ STATUS = \
         'face_capacity': 88
     }
 
+
 def get_status_keys():
     """
     Returns the list of status variable names.
     :return: List of strings, with the status field names.
     """
     return STATUS.keys()
+
 
 # verification styles
 GROUP_VERIFY = 0
