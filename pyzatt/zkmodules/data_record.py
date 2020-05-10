@@ -17,7 +17,7 @@ class DataRecordMixin:
         Requests the attendance log.
 
         :return: None. Stores the attendance log entries
-        in the att_log attribute.
+            in the att_log attribute.
         """
         self.send_command(cmd=DEFS.CMD_DATA_WRRQ,
                           data=bytearray.fromhex('010d000000000000000000'))
@@ -114,12 +114,12 @@ class DataRecordMixin:
         Deletes types of data.
 
         :param data_type: Integer, selects the data to be
-        deleted on the machine. According to the next list:
+            deleted on the machine. According to the next list:
 
-        1. Attendance records.
-        2. Fingerprint templates.
-        4. Operation logs.
-        5. User info.
+            1. Attendance records.
+            2. Fingerprint templates.
+            3. Operation logs.
+            4. User info.
 
         :return: None.
         """

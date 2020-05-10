@@ -81,10 +81,10 @@ for local development::
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass flake8 and the
-   tests, including testing other Python versions with tox::
+5. When you're done making changes, check that your changes pass flake8 (lint)
+   and the tests, including testing other Python versions with tox::
 
-    flake8 pyzatt tests
+    make lint
     tox
 
 6. Commit your changes and push your branch to GitHub::

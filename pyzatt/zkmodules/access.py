@@ -43,14 +43,15 @@ class AccessMixin:
 
         :param tz_no: Integer, timezone number.
         :return: List of lists, with the format
-        [[T0,T1,T2,T4], [T0,T1,T2,T4], ... ].
+            [[T0,T1,T2,T4], [T0,T1,T2,T4], ... ].
 
-        Where the top list consists of seven elements, one for each day, and
-        each day list has 4 elements, that store the timezone for each day:
+            Where the top list consists of seven elements,
+            one for each day, and each day list has 4 elements,
+            that store the timezone for each day:
 
-        (Start hour):(Start minute) To (End hour):(End minute)
+            (Start hour):(Start minute) To (End hour):(End minute)
 
-        Where hours and minutes are given directly as integers.
+            Where hours and minutes are given directly as integers.
         """
         self.send_command(cmd=DEFS.CMD_TZ_RRQ, data=struct.pack('<I', tz_no))
         self.recv_reply()
@@ -92,9 +93,9 @@ class AccessMixin:
 
         :param comb_no: Integer, combination number.
         :return: List, with groups numbers for the given combination, the
-        length of the list is the same as the number of groups for the
-        combination, i.e. 2 valid groups will be returned
-        as a list of two integers.
+            length of the list is the same as the number of groups for the
+            combination, i.e. 2 valid groups will be returned
+            as a list of two integers.
         """
         rreq_ulg = bytearray()
         rreq_ulg.append(comb_no)
@@ -131,13 +132,12 @@ class AccessMixin:
 
         :param group_no: Integer, group number.
         :return: List [Integer, [Integer]*3, Integer, Integer],
+            Where the elements of the list are:
 
-        Where the elements of the list are:
-
-        - The group number.
-        - List of timezones.
-        - Verification style of the group.
-        - Holidays flag, (1=valid holidays, 0=no change on holidays).
+            - The group number.
+            - List of timezones.
+            - Verification style of the group.
+            - Holidays flag, (1=valid holidays, 0=no change on holidays).
         """
         grp_req = bytearray([0x00]*8)
         grp_req[0] = group_no
@@ -183,8 +183,8 @@ class AccessMixin:
 
         :param user_id: String, user's ID.
         :return: List of integers with the user's timezones, the list varies
-        in length, if the user has only one timezone, the list has only one
-        integer, if the user is using group's timezones, the list is empty.
+            in length, if the user has only one timezone, the list has only one
+            integer, if the user is using group's timezones, the list is empty.
         """
         user_sn = self.id_to_sn(user_id)
         self.send_command(cmd=DEFS.CMD_USERTZ_RRQ,
@@ -208,7 +208,7 @@ class AccessMixin:
 
         :param user_id: String, user's ID.
         :param tzs: Lis of integers with the new user's timezones, see
-        get_user_tzs().
+            get_user_tzs().
         :return: None.
         """
         user_sn = self.id_to_sn(user_id)

@@ -131,6 +131,7 @@ STATUS = \
 def get_status_keys():
     """
     Returns the list of status variable names.
+
     :return: List of strings, with the status field names.
     """
     return STATUS.keys()

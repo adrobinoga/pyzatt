@@ -34,7 +34,7 @@ class RealtimeMixin:
         Extracts the alarm type of the last event.
 
         :return: Integer, alarm type, if it fails to extract the alarm type,
-        returns -1.
+            returns -1.
         """
         alarm_type = -1
         if self.last_event_code == DEFS.EF_ALARM:
@@ -47,14 +47,14 @@ class RealtimeMixin:
 
         :return: List [Integer, Integer, Integer].
 
-        Where the elements of the list are:
+            Where the elements of the list are:
 
-        1. Alarm type.
-        2. User's index.
-        3. Matching way.
+            1. Alarm type.
+            2. User's index.
+            3. Matching way.
 
-        If it fails tos extract those fields, returns a
-        list of -1 values [-1,-1,-1].
+            If it fails tos extract those fields, returns a
+            list of -1 values [-1,-1,-1].
         """
         alarm_type = -1
         sn = -1
@@ -70,13 +70,13 @@ class RealtimeMixin:
         Extracts info from a attendance event.
 
         :return: List [Str, Integer, Str].
-        Where the elements of the list are:
+            Where the elements of the list are:
 
-        1. User's ID.
-        2. Verification type, (password=0, fp=1, rfid=2).
-        3. Date string, with the format yyyy/mm/dd HH:MM:SS.
+            1. User's ID.
+            2. Verification type, (password=0, fp=1, rfid=2).
+            3. Date string, with the format yyyy/mm/dd HH:MM:SS.
 
-        If it fails to extract these values, returns ['',-1,''].
+            If it fails to extract these values, returns ['',-1,''].
         """
         uid = ''
         ver_type = -1
@@ -95,14 +95,14 @@ class RealtimeMixin:
         Extracts info from an enrolled fingerprint event.
 
         :return: List [Bool, Str, Integer, Integer].
-        Where the elements of the list are:
+            Where the elements of the list are:
 
-        1. Enroll result, True if it was successful.
-        2. User ID.
-        3. Finger index of the fingerprint.
-        4. Fingerprint template size.
+            1. Enroll result, True if it was successful.
+            2. User ID.
+            3. Finger index of the fingerprint.
+            4. Fingerprint template size.
 
-        If it fails to extract these values, returns [False,'',-1,-1].
+            If it fails to extract these values, returns [False,'',-1,-1].
         """
         uid = ''
         fp_idx = -1
@@ -129,7 +129,7 @@ class RealtimeMixin:
         procedure.
 
         :return: Integer, the score may be 100(valid) or 0(invalid),
-        returns -1 if it fails to extract the score.
+            returns -1 if it fails to extract the score.
         """
         score = -1
         if self.last_event_code == DEFS.EF_FPFTR:
@@ -141,7 +141,7 @@ class RealtimeMixin:
         Blocks execution until a finger score event is received.
 
         :return: Integer, the score may be 100(valid) or 0(invalid),
-        returns -1 if it fails to extract the score.
+            returns -1 if it fails to extract the score.
         """
         while True:
             self.recv_event()
@@ -153,7 +153,7 @@ class RealtimeMixin:
         Extracts the user index from a verify event packet.
 
         :return: Integer, user internal index on machine, returns -1 if it
-        the packet doesn't correspond to a EF_VERIFY event.
+            the packet doesn't correspond to a EF_VERIFY event.
         """
         user_sn = -1
         if self.last_event_code == DEFS.EF_VERIFY:

@@ -122,7 +122,7 @@ def test_realtime(parse_options):
 
             else:
                 print("Unknown event:")
-                misc.print_h(z.get_last_packet())
+                misc.print_hex(z.get_last_packet())
 
     except KeyboardInterrupt:
         misc.print_info("\nExiting...")

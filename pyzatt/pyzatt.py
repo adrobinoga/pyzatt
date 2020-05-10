@@ -49,12 +49,12 @@ class ZKUser:
         :param card_no: Integer, user RF card number.
         :param admin_lv: Integer, user admin level.
         :param neg_enabled: Integer, user enable flag,
-        (0=enabled, 1=disabled).
+            (0=enabled, 1=disabled).
         :param user_group: Integer, group number to which the user belongs.
         :param user_tzs: List of integers, timezones of the user, if it is
-        an empty array, it should be assumed that the user is using the
-        group's timezones.
-        :return:None.
+            an empty array, it should be assumed that the user is using the
+            group's timezones.
+        :return: None.
         """
         self.user_sn = user_sn
         self.user_id = user_id
@@ -310,7 +310,7 @@ class ZKSS(PacketMixin, DataUserMixin,
 
         :param user_id: Str, user's ID.
         :return: Integer, user's index on machine,
-        if the user doesn't exists, returns -1.
+            if the user doesn't exists, returns -1.
         """
         for sn in self.users:
             if self.users[sn].user_id == user_id:
