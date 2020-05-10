@@ -45,7 +45,8 @@ articles, and such.
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/adrobinoga/pyzatt/issues.
+The best way to send feedback is to file an issue
+at https://github.com/adrobinoga/pyzatt/issues.
 
 If you are proposing a feature:
 
@@ -60,15 +61,19 @@ Get Started!
 Ready to contribute? Here's how to set up `pyzatt` for local development.
 
 1. Fork the `pyzatt` repo on GitHub.
+
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/pyzatt.git
+    git clone git@github.com:your_name_here/pyzatt.git
 
-3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
+3. Install your local copy into a virtualenv.
+Assuming you have virtualenvwrapper installed, this is how you set up your fork
+for local development::
 
-    $ mkvirtualenv pyzatt
-    $ cd pyzatt/
-    $ python setup.py develop
+    mkvirtualenv pyzatt
+    cd pyzatt/
+    pip install -r dev_requirements.txt
+    pip install -e .
 
 4. Create a branch for local development::
 
@@ -79,19 +84,31 @@ Ready to contribute? Here's how to set up `pyzatt` for local development.
 5. When you're done making changes, check that your changes pass flake8 and the
    tests, including testing other Python versions with tox::
 
-    $ flake8 pyzatt tests
-    $ python setup.py test or pytest
-    $ tox
-
-   To get flake8 and tox, just pip install them into your virtualenv.
+    flake8 pyzatt tests
+    tox
 
 6. Commit your changes and push your branch to GitHub::
 
-    $ git add .
-    $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
+    git add .
+    git commit -m "Your detailed description of your changes."
+    git push origin name-of-your-bugfix-or-feature
 
 7. Submit a pull request through the GitHub website.
+
+Commit Guidelines
+-----------------
+
+Follow the Udacity commit messages style.
+See https://udacity.github.io/git-styleguide/
+
+- feat: a new feature
+- fix: a bug fix
+- docs: changes to documentation
+- style: formatting, missing semi colons, etc; no code change
+- refactor: refactoring production code
+- test: adding tests, refactoring test; no production code change
+- chore: updating build tasks, package manager configs, etc;
+  no production code change
 
 Pull Request Guidelines
 -----------------------
@@ -100,19 +117,10 @@ Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request should include tests.
 2. If the pull request adds functionality, the docs should be updated. Put
-   your new functionality into a function with a docstring, and add the
-   feature to the list in README.rst.
-3. The pull request should work for Python 3.5, 3.6, 3.7 and 3.8, and for PyPy. Check
+   your new functionality into a function with a docstring.
+3. The pull request should work for Python 3.6, 3.7 and 3.8, and for PyPy. Check
    https://travis-ci.com/adrobinoga/pyzatt/pull_requests
    and make sure that the tests pass for all supported Python versions.
-
-Tips
-----
-
-To run a subset of tests::
-
-$ pytest tests.test_pyzatt
-
 
 Deploying
 ---------
@@ -121,8 +129,8 @@ A reminder for the maintainers on how to deploy.
 Make sure all your changes are committed (including an entry in HISTORY.rst).
 Then run::
 
-$ bump2version patch # possible: major / minor / patch
-$ git push
-$ git push --tags
+    bump2version patch # possible: major / minor / patch
+    git push
+    git push --tags
 
 Travis will then deploy to PyPI if tests pass.

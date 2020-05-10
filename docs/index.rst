@@ -8,6 +8,7 @@ Welcome to PyZatt's documentation!
    readme
    installation
    usage
+   tests
    modules
    contributing
    authors
