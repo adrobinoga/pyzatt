@@ -27,13 +27,14 @@ def print_info(s):
 def print_header(s):
     """
     Prints a title in green bright font.
+
     :param s: String, text to be printed.
     :return: None.
     """
     print_info('\n' + hhh + '\n#\t' + s + '\n')
 
 
-def print_h(arr):
+def print_hex(arr):
     """
     Prints a bytearray as a sequence of hex numbers, e.g. "fffe01".
 
@@ -50,7 +51,7 @@ def is_valid_payload(p):
 
     :param p: Bytearray, with the payload contents.
     :return: Bool, if the payload is consistent, returns True,
-    otherwise returns False.
+        otherwise returns False.
     """
     # if the checksum is valid the checksum calculation, without removing the
     # checksum, should be equal to zero
@@ -100,7 +101,7 @@ def checksum16(payload):
     Calculates checksum of packet.
 
     :param payload: Bytearray, data to which the checksum is going
-    to be applied.
+        to be applied.
     :return: Int, checksum result given as a number.
     """
 

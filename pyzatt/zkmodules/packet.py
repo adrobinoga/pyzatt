@@ -19,11 +19,11 @@ class PacketMixin:
 
         :param cmd_code: Int, Command/reply identifier(see defs.py).
         :param data: Bytearray, data to be placed in the data field
-        of the payload.
+            of the payload.
         :param session_id: Int, session id, if not specified, uses
-        the session from connection setup.
+            the session from connection setup.
         :param reply_number: Int, reply counter, if not specified,
-        the reply number is obtained from context.
+            the reply number is obtained from context.
         :return:
         """
         zk_packet = bytearray(DEFS.START_TAG)  # fixed tag
@@ -60,16 +60,15 @@ class PacketMixin:
         Receives data from the device.
 
         :param buff_size: Int, maximum amount of data to receive,
-        if not specified, is set to 1024, also updates the reply number,
-        and stores fields of the packet to the attributes:
+            if not specified, is set to 1024, also updates the reply number,
+            and stores fields of the packet to the attributes:
 
-        - self.last_reply_code
-        - self.last_session_code
-        - self.last_reply_counter
-        - self.last_payload_data
-
+            - self.last_reply_code
+            - self.last_session_code
+            - self.last_reply_counter
+            - self.last_payload_data
         :return: Bytearray, received data,
-        also stored in last_payload_data.
+            also stored in last_payload_data.
         """
         zkp = self.soc_zk.recv(buff_size)
         zkp = bytearray(zkp)
@@ -81,9 +80,9 @@ class PacketMixin:
         Receives a large dataset from the device.
 
         :param buff_size: Int, maximum amount of data to receive,
-        if not specified, is set to 1024.
+            if not specified, is set to 1024.
         :return: Bytearray, received dataset, if the it extract the dataset,
-        returns an emtpy bytearray.
+            returns an emtpy bytearray.
         """
         zkp = self.recv_packet(buff_size)
         self.parse_ans(zkp)
@@ -164,7 +163,7 @@ class PacketMixin:
         Receives data from the device.
 
         :param buff_size: Int, maximum amount of data to receive,
-        if not specified, is set to 1024.
+            if not specified, is set to 1024.
         :return: Bytearray, received data.
         """
         return bytearray(self.soc_zk.recv(buff_size))
@@ -174,8 +173,8 @@ class PacketMixin:
         Receives an event from the machine and sends an acknowledge reply.
 
         :return: None,
-        stores the code of the event in the last_event_code variable,
-        it also stores the data contents in the last_payload_data variable.
+            stores the code of the event in the last_event_code variable,
+            it also stores the data contents in the last_payload_data variable.
         """
         self.parse_ans(self.recv_packet())
         self.last_event_code = self.last_session_code
@@ -196,7 +195,7 @@ class PacketMixin:
 
         :param cmd: Integer, command id.
         :param data: Bytearray, data to be placed in the data field
-        of the payload.
+            of the payload.
         :return: None.
         """
         self.send_packet(self.create_packet(cmd, data))
@@ -258,7 +257,7 @@ class PacketMixin:
         Checks if the last reply returned an acknowledge packet.
 
         :return: Bool, True if the last reply was an CMD_ACK_OK reply,
-        returns False if otherwise.
+            returns False if otherwise.
         """
         if self.last_reply_code == DEFS.CMD_ACK_OK:
             return True

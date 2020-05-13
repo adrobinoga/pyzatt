@@ -109,7 +109,7 @@ class DataUserMixin:
         :param user_id: Str, user's ID.
         :param verify_style: Integer, verification style.
         :return: Bool, returns True if the command was
-        processed successfully.
+            processed successfully.
         """
         ver_data = bytearray([0x00]*24)
         ver_data[0:2] = struct.pack('<H', self.id_to_sn(user_id))
@@ -144,12 +144,12 @@ class DataUserMixin:
         :param card_no: Integer, user RF card number.
         :param admin_lv: Integer, user admin level.
         :param neg_enabled: Integer, user enable flag,
-        (0=enabled, 1=disabled).
+            (0=enabled, 1=disabled).
         :param user_group: Integer, group number to which the user belongs.
         :param user_tzs: List of integers, timezones of the user, if it is
-        an empty array, it should be assumed that the user is using the
-        group's timezones.
-        :return:None.
+            an empty array, it should be assumed that the user is using the
+            group's timezones.
+        :return: None.
         """
         # check if user exists
         if self.id_exists(user_id):
@@ -191,8 +191,9 @@ class DataUserMixin:
     def get_password(self, user_id):
         """
         Requests the password of a given user.
+
         :param user_id: String, user's ID.
-        :return:
+        :return: String. User password.
         """
         user_sn = self.id_to_sn(user_id)
         return self.users[user_sn].user_password
@@ -224,7 +225,7 @@ class DataUserMixin:
         Requests all the fingerprint templates.
 
         :return: None. Stores the templates and templates info in the
-        corresponding ZKUsers entries.
+            corresponding ZKUsers entries.
         """
         self.send_command(cmd=DEFS.CMD_DATA_WRRQ,
                           data=bytearray.fromhex('0107000200000000000000'))

@@ -16,7 +16,7 @@ class OtherMixin:
         Enables the device, puts the machine in normal operation.
 
         :return: Bool, returns True if the device acknowledges
-        the enable command.
+            the enable command.
         """
         self.send_command(DEFS.CMD_ENABLEDEVICE)
         self.recv_reply()
@@ -28,9 +28,9 @@ class OtherMixin:
         and RF card modules.
 
         :param timer: Integer, disable timer, if it is omitted, an enable
-        command must be send to make the device return to normal operation.
+            command must be send to make the device return to normal operation.
         :return: Bool, returns True if the device acknowledges
-        the disable command.
+            the disable command.
         """
         if timer:
             self.send_command(DEFS.CMD_DISABLEDEVICE, struct.pack('<I', timer))
@@ -46,7 +46,7 @@ class OtherMixin:
         to default "common user".
 
         :return: Bool, returns True if the device acknowledges
-        the command.
+            the command.
         """
         self.send_command(DEFS.CMD_CLEAR_ADMIN)
         self.recv_reply()
@@ -126,7 +126,7 @@ class OtherMixin:
         Sends the verify command and receives the reply.
 
         :return: Bool, returns True if the device acknowledges
-        the command.
+            the command.
         """
         self.send_command(DEFS.CMD_STARTVERIFY)
         self.recv_reply()
@@ -137,7 +137,7 @@ class OtherMixin:
         Sends the cancel capture command and receives the reply.
 
         :return: Bool, returns True if the device acknowledges
-        the command.
+            the command.
         """
         self.send_command(DEFS.CMD_CANCELCAPTURE)
         self.recv_reply()

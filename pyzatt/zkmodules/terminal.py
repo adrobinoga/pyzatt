@@ -21,8 +21,9 @@ class TerminalMixin:
         :param ip_addr: String, ip address of the device.
         :param dev_port: Int, port number.
         :return: Bool, returns True if connection is successful,
-        otherwise it returns False, also sets the flag self.connected_flg if
-        the connection is successful.
+            otherwise it returns False, also sets
+            the flag self.connected_flg if
+            the connection is successful.
         """
 
         # connects to machine
@@ -50,7 +51,7 @@ class TerminalMixin:
         Terminates connection with the given device.
 
         :return: Bool, returns True if disconnection command was
-        processed successfully, also clears the flag self.connected_flg.
+            processed successfully, also clears the flag self.connected_flg.
         """
         # terminate connection command
         self.send_command(DEFS.CMD_EXIT)
@@ -77,9 +78,9 @@ class TerminalMixin:
         Sets the time of the device.
 
         :param t: Datetime object, new time of the device, if not specified,
-        it defaults to current time.
+            it defaults to current time.
         :return: Bool, returns True if set time command was
-        processed successfully.
+            processed successfully.
         """
         self.send_command(DEFS.CMD_SET_TIME, data=misc.encode_time(t))
         self.recv_reply()
@@ -91,9 +92,9 @@ class TerminalMixin:
         values in the given dictionary.
 
         :param stat_keys: Dictionary, with the keys to request, the values
-        of the given keys are overwritten with the output values.
+            of the given keys are overwritten with the output values.
 
-        Example: {admin_count: -1, user_count: -1}.
+            Example: {admin_count: -1, user_count: -1}.
 
         :return: Dictionary, the output is given on the same input dict.
         """
@@ -120,8 +121,8 @@ class TerminalMixin:
         Reads a field from the device status attribute(self.dev_status).
 
         :param p: Position to read, to get the position is recommended to
-        use STATUS[<key>], where key should be the name of a valid field of
-        the status structure.
+            use STATUS[<key>], where key should be the name of a valid field of
+            the status structure.
         :return: Integer, stored in the given position.
         """
         return struct.unpack('<I', self.dev_status[p: p + 4])[0]
@@ -147,9 +148,9 @@ class TerminalMixin:
         Command to request a given parameter from the device.
 
         :param param_name: String, parameters to request, see the protocol
-        terminal spec to see a list of valid param names.
+            terminal spec to see a list of valid param names.
         :return: String, the param value, if it is a boolean, it may be given
-        as "0" or "1", integers are given as strings.
+            as "0" or "1", integers are given as strings.
         """
         # request a parameter
         self.send_command(DEFS.CMD_OPTIONS_RRQ,
@@ -163,11 +164,12 @@ class TerminalMixin:
         Sets a parameter of the device.
 
         :param param_name: String, parameter to modify, see the protocol
-        terminal spec to see a list of valid param names and valid values.
+            terminal spec to see a list of valid param names and valid values.
         :param new_value: String, the new value of the parameters, if it is a
-        boolean, it may be given as "0" or "1", integers are given as strings.
+            boolean, it may be given as "0" or "1",
+            integers are given as strings.
         :return: Bool, returns True if the commands were
-        processed successfully.
+            processed successfully.
         """
         self.send_command(DEFS.CMD_OPTIONS_WRQ, bytearray(
             "{0}={1}\x00".format(param_name, new_value), 'ascii'))

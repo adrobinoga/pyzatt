@@ -3,8 +3,9 @@ import pytest
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--platform", action="store", default="simulator",
-        help="simulator|hardware: chose to simulate or use real hardware"
+        "--platform", action="store", default="hardware",
+        help="simulator|hardware: chose to simulate or use real hardware "
+             "(default hardware)"
     )
     parser.addoption(
         "--ip-address", action="store",
@@ -12,7 +13,7 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         "--seed", type=int,
-        help="random seed to run tests"
+        help="random seed to run tests (not supported yet)"
     )
 
 
