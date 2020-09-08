@@ -249,6 +249,6 @@ class AccessMixin:
 
         :return: Integer, door state.
         """
-        self.send_command(id=DEFS.CMD_DOORSTATE_RRQ)
+        self.send_command(cmd=DEFS.CMD_DOORSTATE_RRQ)
         self.recv_reply()
         return self.last_payload_data[0]
